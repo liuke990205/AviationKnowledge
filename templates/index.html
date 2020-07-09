@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Creative - Bootstrap 3 Responsive Admin Template">
+    <meta name="author" content="GeeksLabs">
+    <meta name="keyword" content="Creative, Dashboard, Admin, Template, Theme, Bootstrap, Responsive, Retina, Minimal">
+    <link rel="shortcut icon" href="/static/img/favicon.png">
+    <title>基于Django的航空领域知识图谱</title>
+    <link href="/static/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/static/css/style.css" rel="stylesheet">
+    <link href="/static/css/elegant-icons-style.css" rel="stylesheet">
+</head>
+<body>
+    <section id="container" class="">
+        <header class="header dark-bg">
+            <div class="toggle-nav">
+                <div class="icon-reorder tooltips" data-original-title="隐藏/显示侧栏" data-placement="bottom">
+                    <i class="fa fa-bars" aria-hidden="true"></i>
+                </div>
+            </div>
+
+            <!--logo start-->
+            <a href="#" class="logo" style="font-size:25px;"> 基于Django的航空领域知识图谱 V1.0</a>
+            <!--logo end-->
+            <div class="top-nav notification-row">
+                <ul class="nav pull-right top-menu">
+                    <li>
+                        <a href='http://127.0.0.1:8001/help/'>
+                            <i class="fa" aria-hidden="true" style="font-size:25px;">Help</i>
+                        </a>
+                    </li>
+                </ul>
+                <ul class="nav pull-right top-menu">
+                    <li>
+                        <a href='http://127.0.0.1:8001/exit/'>
+                            <i class="fa" aria-hidden="true" style="font-size:25px;">退出</i>
+                        </a>
+                    </li>
+                </ul>
+
+            </div>
+        </header>
+        <!--header end-->
+
+        <!--sidebar start-->
+        <aside>
+            <div id="sidebar" class="nav-collapse ">
+                <!-- sidebar menu start-->
+                <ul class="sidebar-menu">
+                    <li>
+                        <a href="http://127.0.0.1:8001/toHome/">
+                            <i class="icon_house_alt"></i>
+                            <span style="font-size:22px;">主界面</span>
+                        </a>
+                    </li>
+
+                    <li>
+                        <a href="http://127.0.0.1:8001/toDataManager/">
+                            <i class="icon_piechart"></i>
+                            <span style="font-size:22px;">数据管理</span>
+                        </a>
+                    </li>
+
+                    <li>
+                        <a href="http://127.0.0.1:8001/toAnnotation/">
+                            <i class="icon_genius"></i>
+                            <span style="font-size:22px;">文本标注</span>
+                        </a>
+                    </li>
+
+                    <li>
+                        <a href="http://127.0.0.1:8001/toEntity/">
+                            <i class=" social_googledrive"></i>
+                            <span style="font-size:22px;">实体识别</span>
+                        </a>
+                    </li>
+
+                    <li>
+                        <a class="" href="#">
+                            <i class="icon_bag_alt"></i>
+                            <span style="font-size:22px;">关系抽取</span>
+                        </a>
+                    </li>
+
+                    <li>
+                        <a class="" href="http://127.0.0.1:8001/toRelation/">
+                            <i class="icon_chat_alt"></i>
+                            <span style="font-size:22px;">关系查询</span>
+                        </a>
+                    </li>
+
+                    <li>
+                        <a class="" href="http://127.0.0.1:8001/toAnswer/">
+                            <i class="icon_book_alt"></i>
+                            <span style="font-size:22px;">问答系统</span>
+                        </a>
+                    </li>
+
+                </ul>
+                <!-- sidebar menu end-->
+            </div>
+        </aside>
+        <!--sidebar end-->
+        <!--main content start-->
+        <section id="main-content">
+            <section class="wrapper">
+                {% block en %}
+                {% endblock en%}
+            </section>
+        </section>
+    </section>
+</body>
+</html>
