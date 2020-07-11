@@ -35,6 +35,11 @@ urlpatterns = [
 
     # 增加一条字典信息
     path('addDictionary/', annotation_view.addDictionary),
+    #删除一条字典信息
+    path('deleteDictionary/', annotation_view.deleteDictionary, name='deleteDictionary'),
+    #修改一条字典信息
+    path('modifyDictionary/', annotation_view.modifyDictionary),
+
     # 删除标注文本信息
     path('deleteTemp/', annotation_view.deleteTemp, name='deleteTemp'),
     # 修改文本信息

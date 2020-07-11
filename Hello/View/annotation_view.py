@@ -93,8 +93,6 @@ def text_annotation(request):
         # 获取当前标注信息的文档名称
         filename = text_current.file_name
 
-
-
         # text_current = request.session.get('text_current')
         '''
         自动标注 start         ---数据输入：text----
@@ -293,3 +291,65 @@ def addDictionary(request):
                 entityList[entity.entity] = entity.entity_type
 
         return render(request, 'text_annotation.html', {'current_text': current_text.content, 'entityList': entityList})
+
+def deleteDictionary(request):
+    entity = request.GET.get('entity')
+    print(entity)
+
+    dictionary =Dictionary.objects.get(entity=entity)
+    print(dictionary.entity_type)
+    dictionary.delete()
+
+    # 获取当前用户的ID
+    username = request.session.get('username')
+    user = User.objects.get(username=username)
+    user_id = user.user_id
+
+    # 获取用户的annotation的ID
+    log = Log.objects.get(user_id=user_id)
+    annotation_id = log.annotation_id
+
+    # 获取当前文本信息
+    current_text = Annotation.objects.get(annotation_id=annotation_id)
+
+    # 获取字典的全部信息
+    dictionary_entity = Dictionary.objects.all()
+
+    entityList = {}
+    # 获取当前文本的头实体和尾实体
+    for entity in dictionary_entity:
+        if current_text.content.find(entity.entity) != -1:
+            entityList[entity.entity] = entity.entity_type
+
+    return render(request, 'text_annotation.html', {'current_text': current_text.content, 'entityList': entityList})
+
+def modifyDictionary(request):
+    entity = request.POST.get('entity1')
+    entity_type=request.POST.get('entity_type1')
+
+    dictionary = Dictionary.objects.get(entity=entity)
+    print(dictionary.entity_type)
+    dictionary.delete()
+
+    # 获取当前用户的ID
+    username = request.session.get('username')
+    user = User.objects.get(username=username)
+    user_id = user.user_id
+
+    # 获取用户的annotation的ID
+    log = Log.objects.get(user_id=user_id)
+    annotation_id = log.annotation_id
+
+    # 获取当前文本信息
+    current_text = Annotation.objects.get(annotation_id=annotation_id)
+
+    # 获取字典的全部信息
+    dictionary_entity = Dictionary.objects.all()
+
+    entityList = {}
+    # 获取当前文本的头实体和尾实体
+    for entity in dictionary_entity:
+        if current_text.content.find(entity.entity) != -1:
+            entityList[entity.entity] = entity.entity_type
+
+    return render(request, 'text_annotation.html', {'current_text': current_text.content, 'entityList': entityList})

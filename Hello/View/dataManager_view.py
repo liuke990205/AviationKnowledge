@@ -141,8 +141,7 @@ def deleteNeo4j(request):
 
     # 获取删除之后的Temp
     tempList = Temp.objects.filter(user_id=user_id)
-
-    return render(request, 'data_manager.html', {'tempList': tempList})
+    return redirect('/toDataManager/')
 
 # 上传文件，并且将数据保存到数据库中
 def upload(request):
