@@ -212,6 +212,7 @@
         </div><!-- /.modal-dialog -->
     </div><!-- /.modal -->
 
+        <script src="/static/js/echarts.js"></script>
     <script src="/static/js/jquery-1.8.3.min.js"></script>
     {% if searchResult %}
         <script type="text/javascript">
@@ -223,7 +224,7 @@
             //构造展示的数据
             var maxDisPlayNode = 100;
             var id = 0;
-            for (var i = 0; id < Math.min(maxDisPlayNode, searchResult.length) && i < searchResult.length; i++) {
+            for (var i = 0; id <=Math.min(maxDisPlayNode, searchResult.length) && i <= searchResult.length; i++) {
                 //获取node1
                 node1 = {};
                 node1['name'] = searchResult[i]['n1']['name'];

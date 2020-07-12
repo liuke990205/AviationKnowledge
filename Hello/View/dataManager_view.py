@@ -2,8 +2,6 @@ import csv
 
 from django.contrib import messages
 from django.shortcuts import render,redirect
-from py2neo import Graph
-
 from Hello.View.relation_view import Screen
 from Hello.models import Annotation, User, Temp
 from Hello.toolkit.pre_load import neo4jconn
@@ -172,7 +170,6 @@ def download(request):
     tableData = []
     searchResult = db.findAll()
     tableData = Screen(searchResult)
-    print(tableData)
     if tableData:
         for data in tableData:
             with open("exload_all_relation.csv", "a", newline="") as csvfile:

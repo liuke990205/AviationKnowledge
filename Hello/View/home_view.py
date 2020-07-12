@@ -8,6 +8,7 @@ def toHome(request):
     db = neo4jconn
     searchResult={}
     searchResult=db.findAll()
+    print(searchResult)
     searchEntity=db.findAllEntity()
     print(len(searchEntity))
     print(len(searchResult))

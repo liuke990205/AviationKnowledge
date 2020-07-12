@@ -21,7 +21,7 @@ class Neo4j_Handle():
 
     # 关系查询：实体2
     def findRelationByEntity2(self, entity1):
-        answer = self.graph.run("MATCH (n1)<- [rel] - (n2{name:\"" + entity1 + "\"}) RETURN n1,rel,n2").data()
+        answer = self.graph.run("MATCH (n1)- [rel] -> (n2{name:\"" + entity1 + "\"}) RETURN n1,rel,n2").data()
         return answer
 
     # 关系查询：实体1+关系
