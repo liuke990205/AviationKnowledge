@@ -90,7 +90,7 @@
                 </div>
             </div>
         </div>
-
+        {% if tempList %}
         <div class="col-md-12">
             <div class="panel panel-default">
                 <header class="panel-heading">
@@ -103,6 +103,12 @@
                         <button type="submit" class="btn btn-warning btn-sm doProModify" style="text-align:center; font-size:15px; float: left;" name="upload">
                         批量导入Neo4j
                         </button>
+                        <a href="{% url 'deleteAllNeo4j' %}">
+                            <button class="btn btn-danger" type="button"
+                                    onclick="return confirm('是否确认全部删除？');" style="float: right; margin-right: 45px">
+                                <span class="glyphicon glyphicon-remove" aria-hidden="true"></span> 删除所有数据
+                            </button>
+                        </a>
                         <div class="show-list" style="position: relative;top: 30px; text-align: center">
 
                             <table style="width: 1100px" class="table table-bordered table-hover" align="center" border="solid 3px">
@@ -150,6 +156,8 @@
                 </div>
             </div>
         </div>
+        {% endif %}
+
         <div class="col-md-12">
             <div class="panel panel-default">
                 <header class="panel-heading">

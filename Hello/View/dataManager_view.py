@@ -141,6 +141,22 @@ def deleteNeo4j(request):
     tempList = Temp.objects.filter(user_id=user_id)
     return redirect('/toDataManager/')
 
+#删除所有数据
+def deleteAllNeo4j(request):
+
+    # 获取当前用户的ID
+    username = request.session.get('username')
+    user = User.objects.get(username=username)
+    user_id = user.user_id
+
+    # 删除temp_id
+    temp = Temp.objects.filter(user_id=user_id)
+    temp.delete()
+
+    # 获取删除之后的Temp
+    tempList = Temp.objects.filter(user_id=user_id)
+    return redirect('/toDataManager/')
+
 # 上传文件，并且将数据保存到数据库中
 def upload(request):
     if request.method == 'POST':

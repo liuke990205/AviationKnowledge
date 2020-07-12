@@ -21,6 +21,8 @@ urlpatterns = [
 
     path('deleteNeo4j/', dataManager_view.deleteNeo4j, name='deleteNeo4j'),
 
+    path('deleteAllNeo4j/', dataManager_view.deleteAllNeo4j, name='deleteAllNeo4j'),
+
     #文本标注文件上传
     path('upload/', dataManager_view.upload),
 
