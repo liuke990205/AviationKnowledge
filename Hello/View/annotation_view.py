@@ -33,11 +33,11 @@ def display_text(request):
         #获取当前用户的未标注信息
         annotation_list = Annotation.objects.filter(user_id_id=user_id, flag=0)
 
-        # 获取获取当前用户的所有标注信息的最后一个annotation_id
-        annotation_last_id = Annotation.objects.filter(user_id_id=user_id).last().annotation_id
 
         # 获取当前用户的所有标注信息
         if annotation_list:
+            # 获取获取当前用户的所有标注信息的最后一个annotation_id
+            annotation_last_id = Annotation.objects.filter(user_id_id=user_id).last().annotation_id
             if int(annotation_last_id) == int(annotation_id):
                 messages.success(request, '已经到最后一条数据啦，没有可标注的数据啦！')
                 return render(request, 'text_annotation.html')

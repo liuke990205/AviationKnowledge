@@ -16,13 +16,12 @@ def Screen(searchResult):
     return tableData
 
 # 跳转到实体识别页面
-def toEntity(request):
-    return render(request, 'entity.html')
+def toEntityRecognition(request):
+    return render(request, 'entity_recognition.html')
 
 #跳转到实体查询页面
 def toEntitySearch(request):
     return render(request, 'entity_search.html')
-
 
 #实体查询
 def entity_search(request):

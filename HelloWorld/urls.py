@@ -8,24 +8,25 @@ urlpatterns = [
     path('', views.login),
     #跳转到主页面
     path('toHome/', home_view.toHome),
-
+    #用户注册
     path('register/', views.register),
+    #用户登录
     path('login/', views.login),
 
     #跳转到数据管理页面
     path('toDataManager/', dataManager_view.toDataManager),
     #将一条数据插入到neo4j数据库
     path('importNeo4j/', dataManager_view.importNeo4j, name='importNeo4j'),
-
+    #批量导入
     path('importNeo4jMuilt/', dataManager_view.importNeo4jMuilt),
-
+    #删除
     path('deleteNeo4j/', dataManager_view.deleteNeo4j, name='deleteNeo4j'),
-
+    #删除所有
     path('deleteAllNeo4j/', dataManager_view.deleteAllNeo4j, name='deleteAllNeo4j'),
 
     #文本标注文件上传
     path('upload/', dataManager_view.upload),
-
+    #导出Neo4j数据库
     path('download/', dataManager_view.download),
 
     # 跳转到标注页面
@@ -49,22 +50,31 @@ urlpatterns = [
     # 增加一条文本信息
     path('addTemp/', annotation_view.addTemp),
 
+    #跳转到实体识别页面
+    path('toEntityRecognition/', entity_view.toEntityRecognition),
 
-    path('toEntity/', entity_view.toEntity),
+    #跳转到实体查询页面
     path('toEntitySearch/', entity_view.toEntitySearch),
-
+    #进行实体查询操作
     path('entity_search/', entity_view.entity_search),
-
+    #进行实体修改操作
     path('entity_modify/', entity_view.entity_modify),
+    #进行实体删除操作
     path('entity_delete/', entity_view.entity_delete, name='entity_delete'),
 
+    #跳转到关系抽取页面
+    path('toRelationeExtract/', relation_view.toRelationeExtract),
+
     #跳转到关系查询界面
-    path('toRelation/', relation_view.toRelation),
+    path('toRelationSearch/', relation_view.toRelationSearch),
     #进行关系查询操作
     path('relation_search/', relation_view.relation_search),
+    #进行关系修改操作
     path('relation_modify/', relation_view.relation_modify),
+    #进行关系删除操作
     path('relation_delete/', relation_view.relation_delete, name='relation_delete'),
 
+    #跳转到问答系统界面
     path('toAnswer/', answer_view.toAnswer),
 
     #跳转到帮助界面

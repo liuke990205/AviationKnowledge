@@ -4,11 +4,13 @@ from django.shortcuts import render
 
 from Hello.toolkit.pre_load import neo4jconn
 
-
 # 跳转到关系抽取页面
-def toRelation(request):
-    return render(request, 'relation_search.html')
+def toRelationeExtract(request):
+    return render(request, 'relation_extract.html')
 
+# 跳转到关系查询页面
+def toRelationSearch(request):
+    return render(request, 'relation_search.html')
 
 def Screen(searchResult):
     tableData = []

@@ -180,6 +180,7 @@ def upload(request):
             messages.success(request, "文件为空！")
             return redirect('/toDataManager/')
 
+#导出Neo4J数据库
 def download(request):
     db = neo4jconn
     searchResult = {}
