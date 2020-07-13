@@ -42,7 +42,7 @@
                             {% csrf_token %}
                             <div id="entity1" class="form-group" style="padding: 2%; margin: 0 auto;">
                                 <input type="text" id="entity1_text" name="entity1_text" class="form-control"
-                                       placeholder="实体１" aria-describedby="basic-addon1" value="{{ entity1 }}" style="width:400px;">
+                                       placeholder="实体１" aria-describedby="basic-addon1" value="{{ entity1 }}" style="width:600px;margin-left: 100px">
                             </div>
                             <div class="btn-group" style="padding: 2%">
                                 <button type="submit" id="btnSearch" class="btn btn-primary">Search</button>
@@ -60,7 +60,7 @@
                         </header>
                         <div class="panel-body">
                             <div style="padding: 2%">
-                                <h2>{{ ctx }} 请点击按钮添加实体！</h2>
+                                <h2>{{ ctx }} </h2>
 
                             </div>
                         </div>
@@ -108,12 +108,12 @@
                                             <input type="button" class="btn btn-warning btn-sm doProModify"
                                                    data-toggle="modal" data-target="#myModal" value="Modify" style="font-size: 15px"
                                                    onclick="
-                                                           document.getElementById('headEntity').value='{{ list.0 }}';
-                                                           document.getElementById('relationshipCategory').value='{{ list.1 }}';
-                                                           document.getElementById('tailEntity').value='{{ list.2 }}';
-                                                           document.getElementById('temp_id').value={{ list.3 }};
+                                                           document.getElementById('headEntity1').value='{{ list.0 }}';
+                                                           document.getElementById('relationshipCategory1').value='{{ list.1 }}';
+                                                           document.getElementById('tailEntity1').value='{{ list.2 }}';
+                                                           document.getElementById('temp_id1').value={{ list.3 }};
                                                            ">
-                                            <a href="{% url 'relation_delete' %}?temp_id={{ list.3 }}">
+                                            <a href="{% url 'entity_delete' %}?temp_id={{ list.3 }}">
                                                 <button class="btn btn-danger" type="button"
                                                         onclick="return confirm('是否确认删除？');">
                                                     <span class="glyphicon glyphicon-remove"
@@ -134,6 +134,63 @@
             {% endif %}
         </div>
     </div>
+
+    <!-- 模态框（Modal） 修改-->
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal"
+                            aria-hidden="true">×
+                    </button>
+                    <h4 class="modal-title" id="myModalLabel" style="font-size:20px;">
+                        Modify Annotation Information
+                    </h4>
+                </div>
+                <div class="modal-body">
+                    <form id="modifyTemp" class="form-horizontal" action="/entity_modify/" method="post">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <label for="temp_id1" class="col-sm-2 control-label">编号：</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" id="temp_id1" placeholder="temp_id1"
+                                       name="temp_id1" required="required" readonly>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="headEntity1" class="col-sm-2 control-label">头实体：</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" id="headEntity1" name="headEntity1"
+                                       placeholder="headEntity1" required="required">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="relationshipCategory1" class="col-sm-2 control-label">关系类别：</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" id="relationshipCategory1"
+                                       name="relationshipCategory1" placeholder="relationshipCategory1"
+                                       required="required" readonly>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="tailEntity1" class="col-sm-2 control-label">尾实体：</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" id="tailEntity1" name="tailEntity1"
+                                       placeholder="tailEntity1" required="required">
+                            </div>
+                        </div>
+
+                        <div class="modal-footer">
+                            <button class="btn btn-default" data-dismiss="modal">关闭</button>
+                            <button type="submit" class="btn btn-primary updatePro">提交更改</button>
+                        </div>
+                    </form>
+                </div>
+
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
 
     <script src="/static/js/echarts.js"></script>
     <script src="/static/js/jquery-1.8.3.min.js"></script>

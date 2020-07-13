@@ -55,6 +55,9 @@ urlpatterns = [
 
     path('entity_search/', entity_view.entity_search),
 
+    path('entity_modify/', entity_view.entity_modify),
+    path('entity_delete/', entity_view.entity_delete, name='entity_delete'),
+
     #跳转到关系查询界面
     path('toRelation/', relation_view.toRelation),
     #进行关系查询操作
