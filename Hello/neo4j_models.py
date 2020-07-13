@@ -18,7 +18,7 @@ class Neo4j_Handle():
     def getEntityRelationbyEntity(self, value):
         # 查询实体：不考虑实体类型，只考虑关系方向
         answer = self.graph.run(
-            "MATCH (n1) - [rel] -> (n2)  WHERE n1.name = \"" + value + "\"  OR n2.name = \"" + value + "\" RETURN n1, rel,n2").data()
+            "MATCH (n1) - [rel] -> (n2)  WHERE n1.name =~ \"" + value + ".*\"  OR n2.name = \"" + value + "\" RETURN n1, rel,n2").data()
         return answer
 
     # 关系查询:实体1

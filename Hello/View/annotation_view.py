@@ -11,8 +11,11 @@ from Hello.models import Log, Annotation, User, Dictionary, Temp, Relation
 def toAnnotation(request):
     username = request.session.get('username')
     user = User.objects.get(username=username)
+    user_id = user.user_id
+    # 获取未标注数据的数量
+    count = len(Annotation.objects.filter(user_id=user_id, flag=0))
 
-    return render(request, 'text_annotation.html', {'username': username})
+    return render(request, 'text_annotation.html', {'username': username, 'count': count})
 
 
 result= []
