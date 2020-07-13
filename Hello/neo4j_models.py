@@ -14,6 +14,13 @@ class Neo4j_Handle():
         self.graph = Graph("bolt: // localhost:7687", username="neo4j", password="root")
         self.matcher = NodeMatcher(self.graph)
 
+    # 实体查询
+    def getEntityRelationbyEntity(self, value):
+        # 查询实体：不考虑实体类型，只考虑关系方向
+        answer = self.graph.run(
+            "MATCH (n1) - [rel] -> (n2)  WHERE n1.name = \"" + value + "\"  OR n2.name = \"" + value + "\" RETURN n1, rel,n2").data()
+        return answer
+
     # 关系查询:实体1
     def findRelationByEntity1(self, entity1):
         answer = self.graph.run("MATCH (n1{name:\"" + entity1 + "\"})- [rel] -> (n2) RETURN n1,rel,n2").data()

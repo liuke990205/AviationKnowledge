@@ -51,6 +51,10 @@ urlpatterns = [
 
 
     path('toEntity/', entity_view.toEntity),
+    path('toEntitySearch/', entity_view.toEntitySearch),
+
+    path('entity_search/', entity_view.entity_search),
+
     #跳转到关系查询界面
     path('toRelation/', relation_view.toRelation),
     #进行关系查询操作

@@ -7,7 +7,7 @@ from Hello.toolkit.pre_load import neo4jconn
 
 # 跳转到关系抽取页面
 def toRelation(request):
-    return render(request, 'relation.html')
+    return render(request, 'relation_search.html')
 
 
 def Screen(searchResult):
@@ -68,13 +68,13 @@ def relation_search(request):
 
         tableData = Screen(searchResult)
         if (len(searchResult) > 0):
-            return render(request, 'relation.html',
+            return render(request, 'relation_search.html',
                           {'searchResult': json.dumps(searchResult, ensure_ascii=False), 'tableData': tableData,
                            'entity1': entity1, 'entity2': entity2, 'relation': relation})
         ctx = {'title': '<h1>暂未找到相应的匹配</h1>'}
-        return render(request, 'relation.html', {'ctx': ctx})
+        return render(request, 'relation_search.html', {'ctx': ctx})
 
-    return render(request, 'relation.html', {'ctx': ctx})
+    return render(request, 'relation_search.html', {'ctx': ctx})
 
 
 def relation_modify(request):
@@ -99,7 +99,7 @@ def relation_modify(request):
             tableData = Screen(searchResult)  # 对结果集进行格式化
 
             if (len(tableData) > 0):
-                return render(request, 'relation.html',
+                return render(request, 'relation_search.html',
                               {'searchResult': json.dumps(searchResult, ensure_ascii=False), 'tableData': tableData,
                                'entity1': entity1})
 
@@ -108,7 +108,7 @@ def relation_modify(request):
             searchResult = db.findRelationByEntity2(entity2)
             tableData = Screen(searchResult)
             if (len(searchResult) > 0):
-                return render(request, 'relation.html',
+                return render(request, 'relation_search.html',
                               {'searchResult': json.dumps(searchResult, ensure_ascii=False), 'tableData': tableData,
                                'entity2': entity2})
 
@@ -117,7 +117,7 @@ def relation_modify(request):
             searchResult = db.findOtherEntities(entity1, relation)
             tableData = Screen(searchResult)
             if (len(searchResult) > 0):
-                return render(request, 'relation.html',
+                return render(request, 'relation_search.html',
                               {'searchResult': json.dumps(searchResult, ensure_ascii=False), 'tableData': tableData,
                                'entity1': entity1, 'relation': relation})
 
@@ -126,7 +126,7 @@ def relation_modify(request):
             searchResult = db.findOtherEntities2(entity2, relation)
             tableData = Screen(searchResult)
             if (len(searchResult) > 0):
-                return render(request, 'relation.html',
+                return render(request, 'relation_search.html',
                               {'searchResult': json.dumps(searchResult, ensure_ascii=False), 'tableData': tableData,
                                'entity2': entity2, 'relation': relation})
 
@@ -135,7 +135,7 @@ def relation_modify(request):
             searchResult = db.findRelationByEntities(entity1, entity2)
             tableData = Screen(searchResult)
             if (len(searchResult) > 0):
-                return render(request, 'relation.html',
+                return render(request, 'relation_search.html',
                               {'searchResult': json.dumps(searchResult, ensure_ascii=False), 'tableData': tableData,
                                'entity1': entity1, 'entity2': entity2})
 
@@ -144,7 +144,7 @@ def relation_modify(request):
             searchResult = db.findEntityRelation(entity1, relation, entity2)
             tableData = Screen(searchResult)
             if (len(searchResult) > 0):
-                return render(request, 'relation.html',
+                return render(request, 'relation_search.html',
                               {'searchResult': json.dumps(searchResult, ensure_ascii=False), 'tableData': tableData,
                                'entity1': entity1, 'entity2': entity2, 'relation': relation})
 
@@ -153,11 +153,11 @@ def relation_modify(request):
             searchResult = db.findAll()
             tableData = Screen(searchResult)
             if (len(searchResult) > 0):
-                return render(request, 'relation.html',
+                return render(request, 'relation_search.html',
                               {'searchResult': json.dumps(searchResult, ensure_ascii=False), 'tableData': tableData,
                                'entity1': entity1, 'entity2': entity2, 'relation': relation})
         ctx = {'title': '<h1>暂未找到相应的匹配</h1>'}
-        return render(request, 'relation.html', {'ctx': ctx})
+        return render(request, 'relation_search.html', {'ctx': ctx})
 
 
 def relation_delete(request):
@@ -177,7 +177,7 @@ def relation_delete(request):
         tableData = Screen(searchResult)  # 对结果集进行格式化
 
         if (len(tableData) > 0):
-            return render(request, 'relation.html',
+            return render(request, 'relation_search.html',
                           {'searchResult': json.dumps(searchResult, ensure_ascii=False), 'tableData': tableData,
                            'entity1': entity1})
 
@@ -186,7 +186,7 @@ def relation_delete(request):
         searchResult = db.findRelationByEntity2(entity2)
         tableData = Screen(searchResult)
         if (len(searchResult) > 0):
-            return render(request, 'relation.html',
+            return render(request, 'relation_search.html',
                           {'searchResult': json.dumps(searchResult, ensure_ascii=False), 'tableData': tableData,
                            'entity2': entity2})
 
@@ -195,7 +195,7 @@ def relation_delete(request):
         searchResult = db.findOtherEntities(entity1, relation)
         tableData = Screen(searchResult)
         if (len(searchResult) > 0):
-            return render(request, 'relation.html',
+            return render(request, 'relation_search.html',
                           {'searchResult': json.dumps(searchResult, ensure_ascii=False), 'tableData': tableData,
                            'entity1': entity1, 'relation': relation})
 
@@ -204,7 +204,7 @@ def relation_delete(request):
         searchResult = db.findOtherEntities2(entity2, relation)
         tableData = Screen(searchResult)
         if (len(searchResult) > 0):
-            return render(request, 'relation.html',
+            return render(request, 'relation_search.html',
                           {'searchResult': json.dumps(searchResult, ensure_ascii=False), 'tableData': tableData,
                            'entity2': entity2, 'relation': relation})
 
@@ -213,7 +213,7 @@ def relation_delete(request):
         searchResult = db.findRelationByEntities(entity1, entity2)
         tableData = Screen(searchResult)
         if (len(searchResult) > 0):
-            return render(request, 'relation.html',
+            return render(request, 'relation_search.html',
                           {'searchResult': json.dumps(searchResult, ensure_ascii=False), 'tableData': tableData,
                            'entity1': entity1, 'entity2': entity2})
 
@@ -222,7 +222,7 @@ def relation_delete(request):
         searchResult = db.findEntityRelation(entity1, relation, entity2)
         tableData = Screen(searchResult)
         if (len(searchResult) > 0):
-            return render(request, 'relation.html',
+            return render(request, 'relation_search.html',
                           {'searchResult': json.dumps(searchResult, ensure_ascii=False), 'tableData': tableData,
                            'entity1': entity1, 'entity2': entity2, 'relation': relation})
 
@@ -231,8 +231,8 @@ def relation_delete(request):
         searchResult = db.findAll()
         tableData = Screen(searchResult)
         if (len(searchResult) > 0):
-            return render(request, 'relation.html',
+            return render(request, 'relation_search.html',
                           {'searchResult': json.dumps(searchResult, ensure_ascii=False), 'tableData': tableData,
                            'entity1': entity1, 'entity2': entity2, 'relation': relation})
     ctx = {'title': '<h1>暂未找到相应的匹配</h1>'}
-    return render(request, 'relation.html', {'ctx': ctx})
+    return render(request, 'relation_search.html', {'ctx': ctx})
