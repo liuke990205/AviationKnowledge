@@ -6,18 +6,14 @@
     <title></title>
     <meta charset="utf-8"/>
     <link rel="stylesheet" href="/static/css/bootstrap.min.css"/>
-    <link rel="stylesheet" href="http://cdn.static.runoob.com/libs/bootstrap/3.3.7/css/bootstrap.min.css">
     <link href="/static/css/font-awesome.min.css" rel="stylesheet"/>
     <link rel="stylesheet" href="/static/css/bootstrap.css"/>
     <link rel="stylesheet" href="/static/css/style2.css"/>
+    <link rel="stylesheet" href="/static/css/style.css"/>
 
     <script type="text/javascript" src="/static/js/jquery.min.js"></script>
     <script type="text/javascript" src="/static/js/bootstrap.min.js"></script>
     <script src="/static/js/echarts.common.min.js"></script>
-
-    <script src="http://cdn.static.runoob.com/libs/jquery/2.1.1/jquery.min.js"></script>
-    <script src="http://cdn.static.runoob.com/libs/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-    <script type="text/javascript" src="http://echarts.baidu.com/gallery/vendors/echarts/echarts-all-3.js"></script>
 </head>
 <title>关系</title>
     <div class="container">
@@ -40,13 +36,13 @@
                         <form id="searchRelationForm" class="form-inline" style="padding-left: 10% ; padding-right: 10%"
                               method="post" action="/relation_search/">
                             {% csrf_token %}
-                            <div id="entity1" class="form-group" style="padding: 2%">
+                            <div id="entity1" class="form-group" style="padding: 2%; margin-left: 130px">
                                 <input type="text" id="entity1_text" name="entity1_text" class="form-control"
                                        placeholder="实体１" aria-describedby="basic-addon1" value="{{ entity1 }}">
                             </div>
-                            <div class="btn-group" style="padding: 2%">
-                                <select name="relation_text" id="relation_text" class="">
-                                    <option value=""></option>
+                            <div class="form-group" style="padding: 2%">
+                                <select name="relation_text" id="relation_text" class="form-control" style="text-align: center">
+                                    <option value="{{ relation}}">{{ relation}}</option>
                                     <option value="参考">参考</option>
                                     <option value="组成">组成</option>
                                     <option value="性能指标">性能指标</option>
@@ -55,11 +51,6 @@
                                 </select>
                             </div>
 
-                            <div id="relation_name" class="form-group hide" style="padding: 2%">
-                                <input type="text" id="relation_name_input" name="relation_name_text"
-                                       class="form-control" placeholder="输入关系名称" aria-describedby="basic-addon1"
-                                       value="{{ relation }}">
-                            </div>
                             <div id="entity2" class="form-group" style="padding: 2%">
                                 <input type="text" id="entity2_text" name="entity2_text" class="form-control"
                                        placeholder="实体２" aria-describedby="basic-addon1" value="{{ entity2 }}">
@@ -386,4 +377,21 @@
             myChart.setOption(option);
         </script>
     {% endif %}
+    <script>
+	$(".dropdown-menu li a").click(function(){
+	   var selText = $(this).text();
+	   $(this).parents('.btn-group').find('.dropdown-toggle').html(selText+' <span class="caret"></span>');
+	   if(selText.trim()!="Other"){
+	   	$("#relationshipCategory").val(selText.trim()) ;
+	   }
+	   //combobox behavior
+	   if (selText.trim()==="Other") {
+	       $("#relation_name").removeClass("hide");
+	   }
+	   else{
+	   	   $("#relation_name").addClass("hide");
+	   }
+
+	});
+</script>
 {% endblock en %}

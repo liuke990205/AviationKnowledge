@@ -38,7 +38,7 @@ def importNeo4j(request):
     if result1 and result2:
         #判断是否存在关系
         if(db.findRelationByEntities(relation.headEntity,relation.tailEntity)):#如果存在关系，更新关系
-            db.modifyRelation(relation.headEntity,relation.tailEntity,relation.relationshipCategory,id)
+            db.modifyRelation(relation.headEntity, relation.tailEntity, relation.relationshipCategory, id)
         else:#如果两个实体不存在关系，则直接创建关系
             db.insertRelation(relation.headEntity, relation.relationshipCategory, relation.tailEntity, id)
         temp = Temp.objects.get(temp_id=id)
@@ -74,8 +74,6 @@ def importNeo4j(request):
         tempList = Temp.objects.filter(user_id=user_id)
         #return render(request, 'data_manager.html', {'tempList': list})
         return redirect("/toDataManager/")
-
-
 
 #批量导入Neo4j数据库
 def importNeo4jMuilt(request):
@@ -123,7 +121,7 @@ def importNeo4jMuilt(request):
         messages.success(request, "未选中任何数据！")
     return redirect('/toDataManager/')
 
-
+#删除一条Neo4j数据
 def deleteNeo4j(request):
     # 获取前端传过来的temp_id
     id = request.GET.get('temp_id')
