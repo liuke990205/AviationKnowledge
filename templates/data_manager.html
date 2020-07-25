@@ -90,6 +90,32 @@
                 </div>
             </div>
         </div>
+        <div class="col-md-12">
+            <div class="panel panel-default">
+                <header class="panel-heading">
+                    选择待抽取的数据库表：
+                </header>
+                <div class="panel-body">
+                    <form name="d2neo4j" method="post" action="/d2neo4j/">
+                        {% csrf_token %}
+                        <div class="input-append">
+                            <select name="databaseTable" id="databaseTable" class="form-control" style="float: left; width: 300px">
+                                {% for list in tableList %}
+                                <option value="{{ list }}">{{ list }}</option>
+                                {% endfor %}
+                            </select>
+                            <select name="databaseTable2" id="databaseTable2" class="form-control" style=" width: 300px; float: right">
+                                <option value=""></option>
+                                {% for list in tableList %}
+                                <option value="{{ list }}">{{ list }}</option>
+                                {% endfor %}
+                            </select>
+                            <button type="submit" style="background-color:#00aced; width: 116px;height: 36px; text-align: center; margin-left: 200px" name="upload">确认</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
         {% if tempList %}
         <div class="col-md-12">
             <div class="panel panel-default">

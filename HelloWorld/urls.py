@@ -23,6 +23,8 @@ urlpatterns = [
     path('deleteNeo4j/', dataManager_view.deleteNeo4j, name='deleteNeo4j'),
     #删除所有
     path('deleteAllNeo4j/', dataManager_view.deleteAllNeo4j, name='deleteAllNeo4j'),
+    ##从关系数据库中抽取知识
+    path('d2neo4j/', dataManager_view.d2neo4j),
 
     #文本标注文件上传
     path('upload/', dataManager_view.upload),

@@ -1,9 +1,11 @@
 import csv
 
+import pymysql
 from django.contrib import messages
-from django.shortcuts import render,redirect
+from django.shortcuts import render, redirect
+
 from Hello.View.relation_view import Screen
-from Hello.models import Annotation, User, Temp
+from Hello.models import Annotation, User, Temp, Dictionary
 from Hello.toolkit.pre_load import neo4jconn
 
 
@@ -11,13 +13,55 @@ from Hello.toolkit.pre_load import neo4jconn
 def toDataManager(request):
     # 获取当前用户的ID
     username = request.session.get('username')
-    user = User.objects.get(username=username)
+    user = User.objects. \
+        get(username=username)
     user_id = user.user_id
 
     # 根据当前用户 查询所有的关系数据
     tempList = Temp.objects.filter(user_id=user_id)
 
-    return render(request, 'data_manager.html', {'tempList': tempList})
+    conn = pymysql.connect(host='127.0.0.1', port=3306, user='root', password='root', database='source')
+    cursor = conn.cursor()
+    count = cursor.execute("show tables")
+    tableList = list()
+    for i in range(count):
+        result = cursor.fetchone()
+        tableList.append(result[0])
+    print(tableList)
+    return render(request, 'data_manager.html', {'tempList': tempList, 'tableList': tableList})
+
+
+# 从关系数据库中抽取知识
+def d2neo4j(request):
+    table = request.POST['databaseTable']
+    print(table)
+    conn = pymysql.connect(host='127.0.0.1', port=3306, user='root', password='root', database='source')
+    cursor = conn.cursor()
+    sql = "select * from " + (table)
+    print(sql)
+    count = cursor.execute(sql)
+
+    for i in range(count):
+        result = cursor.fetchone()
+        print(result[1])
+        # 获取字典的全部信息
+        dictionary_entity = Dictionary.objects.all()
+        # 实体类型
+        type = ""
+        for entity in dictionary_entity:
+            if entity.entity == result[1]:
+                type = entity.entity_type
+                break
+        print(type)
+        if type:
+            # 生成实体节点（是否插入属性）
+            db = neo4jconn
+            db.createNode(result[1], type)
+
+    cursor.close()  # 关闭游标
+    conn.close()  # 关闭连接
+    messages.success(request, "提取成功！")
+    return redirect("/toDataManager/")
 
 
 # 将一条数据插入到Neo4j数据库
@@ -32,22 +76,22 @@ def importNeo4j(request):
     # 连接数据库
     db = neo4jconn
 
-    #查询出来头实体和尾实体是否已经存在
+    # 查询出来头实体和尾实体是否已经存在
     result1 = db.findEntity(relation.headEntity)
     result2 = db.findEntity(relation.tailEntity)
     if result1 and result2:
-        #判断是否存在关系
-        if(db.findRelationByEntities(relation.headEntity,relation.tailEntity)):#如果存在关系，更新关系
+        # 判断是否存在关系
+        if (db.findRelationByEntities(relation.headEntity, relation.tailEntity)):  # 如果存在关系，更新关系
             db.modifyRelation(relation.headEntity, relation.tailEntity, relation.relationshipCategory, id)
-        else:#如果两个实体不存在关系，则直接创建关系
+        else:  # 如果两个实体不存在关系，则直接创建关系
             db.insertRelation(relation.headEntity, relation.relationshipCategory, relation.tailEntity, id)
         temp = Temp.objects.get(temp_id=id)
         temp.delete()
         return redirect('/toDataManager/')
     elif result1:
-        #创建尾实体
+        # 创建尾实体
         db.createNode(relation.tailEntity, relation.tailEntityType)
-        #插入一条neo4j数据库信息
+        # 插入一条neo4j数据库信息
         db.insertRelation(relation.headEntity, relation.relationshipCategory, relation.tailEntity, id)
         temp = Temp.objects.get(temp_id=id)
         temp.delete()
@@ -72,10 +116,11 @@ def importNeo4j(request):
         temp = Temp.objects.get(temp_id=id)
         temp.delete()
         tempList = Temp.objects.filter(user_id=user_id)
-        #return render(request, 'data_manager.html', {'tempList': list})
+        # return render(request, 'data_manager.html', {'tempList': list})
         return redirect("/toDataManager/")
 
-#批量导入Neo4j数据库
+
+# 批量导入Neo4j数据库
 def importNeo4jMuilt(request):
     boxList = request.POST.getlist('boxList')
     # 连接数据库
@@ -121,7 +166,8 @@ def importNeo4jMuilt(request):
         messages.success(request, "未选中任何数据！")
     return redirect('/toDataManager/')
 
-#删除一条Neo4j数据
+
+# 删除一条Neo4j数据
 def deleteNeo4j(request):
     # 获取前端传过来的temp_id
     id = request.GET.get('temp_id')
@@ -139,9 +185,9 @@ def deleteNeo4j(request):
     tempList = Temp.objects.filter(user_id=user_id)
     return redirect('/toDataManager/')
 
-#删除所有数据
-def deleteAllNeo4j(request):
 
+# 删除所有数据
+def deleteAllNeo4j(request):
     # 获取当前用户的ID
     username = request.session.get('username')
     user = User.objects.get(username=username)
@@ -154,6 +200,7 @@ def deleteAllNeo4j(request):
     # 获取删除之后的Temp
     tempList = Temp.objects.filter(user_id=user_id)
     return redirect('/toDataManager/')
+
 
 # 上传文件，并且将数据保存到数据库中
 def upload(request):
@@ -178,7 +225,8 @@ def upload(request):
             messages.success(request, "文件为空！")
             return redirect('/toDataManager/')
 
-#导出Neo4J数据库
+
+# 导出Neo4J数据库
 def download(request):
     db = neo4jconn
     searchResult = {}

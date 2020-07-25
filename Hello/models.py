@@ -46,3 +46,13 @@ class Relation(models.Model):
     head_entity = models.CharField(max_length=100)
     tail_entity = models.CharField(max_length=100)
     relation = models.CharField(max_length=100)
+
+class Aircraft(models.Model):
+    aircraft_id = models.AutoField(primary_key=True)
+    aircraft_name = models.CharField(max_length=100)
+    description = models.CharField(max_length=200)
+
+class Model(models.Model):
+    model_id = models.AutoField(primary_key=True)
+    model_name = models.CharField(max_length=100)
+    description = models.CharField(max_length=200)
