@@ -27,42 +27,95 @@ def toDataManager(request):
     for i in range(count):
         result = cursor.fetchone()
         tableList.append(result[0])
-    print(tableList)
+    #print(tableList)
     return render(request, 'data_manager.html', {'tempList': tempList, 'tableList': tableList})
 
+def getTable(request):
+    # 获取表名
+    table = request.POST['databaseTable']
+
+    #将数据库表名存入session
+    request.session['table'] = table
+
+    #print(table)
+    conn = pymysql.connect(host='127.0.0.1', port=3306, user='root', password='root', database='source')
+    cursor = conn.cursor()
+
+    sql = "select COLUMN_NAME from information_schema.COLUMNS where table_name = '%s'" % (table)
+    count = cursor.execute(sql)
+    aList = set()
+    for i in range(count):
+        aList.add(cursor.fetchone()[0])
+
+    # 获取当前用户的ID
+    username = request.session.get('username')
+    user = User.objects.get(username=username)
+    user_id = user.user_id
+
+    # 根据当前用户 查询所有的关系数据
+    tempList = Temp.objects.filter(user_id=user_id)
+
+    count = cursor.execute("show tables")
+    tableList = list()
+    for i in range(count):
+        result = cursor.fetchone()
+        tableList.append(result[0])
+    #print(tableList)
+
+    cursor.close()  # 关闭游标
+    conn.close()  # 关闭连接
+
+    return render(request, 'data_manager.html', {'tempList': tempList, 'tableList': tableList, 'aList': aList})
 
 # 从关系数据库中抽取知识
 def d2neo4j(request):
-    table = request.POST['databaseTable']
+    table = request.session.get('table')
     print(table)
+    entity_name = request.POST.getlist('entity_name')
+    entity_property = request.POST.getlist('entity_property')
+    print(entity_name)
+    print(entity_property)
+
+    insertNode(table, entity_name, entity_property)
+
+    messages.success(request, "提取成功！")
+    return redirect('/toDataManager/')
+
+
+def insertNode(table, entity_name, entity_property):
     conn = pymysql.connect(host='127.0.0.1', port=3306, user='root', password='root', database='source')
     cursor = conn.cursor()
-    sql = "select * from " + (table)
+
+    str=','.join(entity_property)
+    #print(str)
+
+    #"MATCH (n1{name:\"" + entity1 + "\"})- [rel{type:\"" + relation + "\"}] -> (n2{name:\"" + entity2 + "\"}) RETURN n1,rel,n2"
+
+    sql = "select %s, %s from %s" % (entity_name[0], str, table)
     print(sql)
     count = cursor.execute(sql)
 
     for i in range(count):
         result = cursor.fetchone()
-        print(result[1])
+        print(result)
+        result = list(result)
+        name = result[0]
         # 获取字典的全部信息
         dictionary_entity = Dictionary.objects.all()
         # 实体类型
         type = ""
         for entity in dictionary_entity:
-            if entity.entity == result[1]:
+            if entity.entity == name:
                 type = entity.entity_type
                 break
         print(type)
         if type:
             # 生成实体节点（是否插入属性）
+            result.remove(name)
             db = neo4jconn
-            db.createNode(result[1], type)
-
+            db.createNode(name, type, result)
     cursor.close()  # 关闭游标
     conn.close()  # 关闭连接
-    messages.success(request, "提取成功！")
-    return redirect("/toDataManager/")
-
 
 # 将一条数据插入到Neo4j数据库
 def importNeo4j(request):

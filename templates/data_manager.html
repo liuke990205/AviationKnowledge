@@ -96,26 +96,41 @@
                     选择待抽取的数据库表：
                 </header>
                 <div class="panel-body">
-                    <form name="d2neo4j" method="post" action="/d2neo4j/">
+                    <form name="d2neo4j" method="post" action="/getTable/">
                         {% csrf_token %}
                         <div class="input-append">
                             <select name="databaseTable" id="databaseTable" class="form-control" style="float: left; width: 300px">
-                                {% for list in tableList %}
-                                <option value="{{ list }}">{{ list }}</option>
-                                {% endfor %}
-                            </select>
-                            <select name="databaseTable2" id="databaseTable2" class="form-control" style=" width: 300px; float: right">
                                 <option value=""></option>
                                 {% for list in tableList %}
                                 <option value="{{ list }}">{{ list }}</option>
                                 {% endfor %}
                             </select>
-                            <button type="submit" style="background-color:#00aced; width: 116px;height: 36px; text-align: center; margin-left: 200px" name="upload">确认</button>
+                            <button type="submit" style="background-color:#00aced; width: 116px;height: 36px; text-align: center; margin-left: 200px" name="upload">确认选择</button>
                         </div>
                     </form>
+                    <form name="d2neo4j" method="post" action="/d2neo4j/">
+                        {% csrf_token %}
+                        <div class="input-append">
+                            实体名:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                            {% for list in aList %}
+                                <label><input name="entity_name" type="checkbox" value="{{ list }}" />{{ list }} </label>
+                                &nbsp;&nbsp;
+                            {% endfor %}
+                            <br>
+                            实体属性:&nbsp;&nbsp;
+                            {% for list in aList %}
+                                <label><input name="entity_property" type="checkbox" value="{{ list }}" />{{ list }} </label>
+                                &nbsp;&nbsp;
+                            {% endfor %}
+                        </div>
+
+                        <button type="submit" style="background-color:#00aced; width: 116px;height: 36px; text-align: center; margin-left: 200px" name="upload">开始抽取</button>
+                    </form>
+
                 </div>
             </div>
         </div>
+
         {% if tempList %}
         <div class="col-md-12">
             <div class="panel panel-default">

@@ -72,8 +72,13 @@ class Neo4j_Handle():
         self.graph.run(
             "MATCH(x{name:\"" + entity1 + "\"}),(y{name:\"" + entity2 + "\"}) CREATE (x)-[jx:" + relation + "{type: \"" + relation + "\", id: \"" + id + "\"}]->(y)")
 
-    def createNode(self, entity, type):
-        self.graph.run("MERGE(x:" + type + "{name:\"" + entity + "\"})")
+    def createNode(self, entity, type, result):
+        print(result)
+        #str="MERGE(x:" + type + "{name:\"" + entity + "\"})"
+        str = "MERGE(x:" + type + "{" + \
+              " name:\"" + entity + "\" "\
+              +"})"
+        self.graph.run(str)
 
     def modifyRelation(self, entity1, entity2, relation, temp_id):
         self.graph.run(
