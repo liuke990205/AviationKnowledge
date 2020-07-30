@@ -100,7 +100,7 @@
                         {% csrf_token %}
                         <div class="input-append">
                             <select name="databaseTable" id="databaseTable" class="form-control" style="float: left; width: 300px">
-                                <option value=""></option>
+                                <option value="{{ table }}">{{ table }}</option>
                                 {% for list in tableList %}
                                 <option value="{{ list }}">{{ list }}</option>
                                 {% endfor %}
@@ -113,7 +113,7 @@
                         <div class="input-append">
                             实体名:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                             {% for list in aList %}
-                                <label><input name="entity_name" type="checkbox" value="{{ list }}" />{{ list }} </label>
+                                <label><input name="entity_name" type="radio" value="{{ list }}" />{{ list }} </label>
                                 &nbsp;&nbsp;
                             {% endfor %}
                             <br>
@@ -124,6 +124,25 @@
                             {% endfor %}
                         </div>
 
+                        <br>
+                        <br>
+
+                        {% if bList %}
+
+                        <div class="input-append">
+                            实体名:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                            {% for list in bList %}
+                                <label><input name="entity_name2" type="radio" value="{{ list }}" />{{ list }} </label>
+                                &nbsp;&nbsp;
+                            {% endfor %}
+                            <br>
+                            实体属性:&nbsp;&nbsp;
+                            {% for list in bList %}
+                                <label><input name="entity_property2" type="checkbox" value="{{ list }}" />{{ list }} </label>
+                                &nbsp;&nbsp;
+                            {% endfor %}
+                        </div>
+                        {% endif %}
                         <button type="submit" style="background-color:#00aced; width: 116px;height: 36px; text-align: center; margin-left: 200px" name="upload">开始抽取</button>
                     </form>
 

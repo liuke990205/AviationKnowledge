@@ -5,7 +5,7 @@ from django.contrib import messages
 from django.shortcuts import render, redirect
 
 from Hello.View.relation_view import Screen
-from Hello.models import Annotation, User, Temp, Dictionary
+from Hello.models import Annotation, User, Temp, Dictionary, Relation
 from Hello.toolkit.pre_load import neo4jconn
 
 
@@ -62,24 +62,64 @@ def getTable(request):
         tableList.append(result[0])
     #print(tableList)
 
+
+    sql = "select TABLE_NAME,COLUMN_NAME,CONSTRAINT_NAME from INFORMATION_SCHEMA.KEY_COLUMN_USAGE where CONSTRAINT_SCHEMA ='source' AND REFERENCED_TABLE_NAME = '%s';" % (table)
+    count = (cursor.execute(sql))
+    bList = set()
+    if count > 0:
+        for i in range(count):
+            re = cursor.fetchone()
+
+        request.session['table2'] = re[0]
+        request.session['re_name'] = re[1]
+
+        sql2 = "select COLUMN_NAME from information_schema.COLUMNS where table_name = '%s'" % (re[0])
+        count = cursor.execute(sql2)
+
+        for i in range(count):
+            bList.add(cursor.fetchone()[0])
+
     cursor.close()  # 关闭游标
     conn.close()  # 关闭连接
 
-    return render(request, 'data_manager.html', {'tempList': tempList, 'tableList': tableList, 'aList': aList})
+    return render(request, 'data_manager.html', {'tempList': tempList, 'tableList': tableList, 'aList': aList, 'table': table, 'bList': bList})
+
 
 # 从关系数据库中抽取知识
 def d2neo4j(request):
-    table = request.session.get('table')
-    print(table)
-    entity_name = request.POST.getlist('entity_name')
-    entity_property = request.POST.getlist('entity_property')
-    print(entity_name)
-    print(entity_property)
 
+    table = request.session.get('table')
+    entity_name = request.POST.get('entity_name')
+    entity_property = request.POST.getlist('entity_property')
     insertNode(table, entity_name, entity_property)
+
+    entity_name2 = request.POST.get('entity_name2')
+    entity_property2 = request.POST.getlist('entity_property2')
+    if entity_name2:
+        table2 = request.session.get('table2')
+        insertNode(table2, entity_name2, entity_property2)
+
+        re_name = request.session.get('re_name')
+        insertKnow(table2, entity_name2, re_name)
 
     messages.success(request, "提取成功！")
     return redirect('/toDataManager/')
+
+def insertKnow(table2, entity_name2, re_name):
+    conn = pymysql.connect(host='127.0.0.1', port=3306, user='root', password='root', database='source')
+    cursor = conn.cursor()
+    sql = "select %s, %s from %s" % (entity_name2, re_name, table2)
+
+    count = cursor.execute(sql)
+    for i in range(count):
+        result = cursor.fetchone()
+        # 获取到头实体和尾实体的类型
+        headEntityType = Dictionary.objects.get(entity=result[0]).entity_type
+        tailEntityType = Dictionary.objects.get(entity=result[1]).entity_type
+        # 根据头实体和尾实体来查询之间的关系
+        relation = Relation.objects.get(head_entity=headEntityType, tail_entity=tailEntityType)
+        db = neo4jconn
+        db.insertRelation(result[0], relation.relation, result[1], '200')
 
 
 def insertNode(table, entity_name, entity_property):
@@ -89,12 +129,11 @@ def insertNode(table, entity_name, entity_property):
     str=','.join(entity_property)
     #print(str)
 
-    #"MATCH (n1{name:\"" + entity1 + "\"})- [rel{type:\"" + relation + "\"}] -> (n2{name:\"" + entity2 + "\"}) RETURN n1,rel,n2"
-
-    sql = "select %s, %s from %s" % (entity_name[0], str, table)
+    sql = "select %s, %s from %s" % (entity_name, str, table)
     print(sql)
     count = cursor.execute(sql)
 
+    dict={}
     for i in range(count):
         result = cursor.fetchone()
         print(result)
@@ -108,12 +147,15 @@ def insertNode(table, entity_name, entity_property):
             if entity.entity == name:
                 type = entity.entity_type
                 break
-        print(type)
+        #print(type)
+
         if type:
             # 生成实体节点（是否插入属性）
             result.remove(name)
+            for i in range(len(entity_property)):
+                dict.update({entity_property[i]: result[i]})
             db = neo4jconn
-            db.createNode(name, type, result)
+            db.createNode(name, type, dict)
     cursor.close()  # 关闭游标
     conn.close()  # 关闭连接
 
