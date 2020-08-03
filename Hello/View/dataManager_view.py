@@ -30,6 +30,7 @@ def toDataManager(request):
     #print(tableList)
     return render(request, 'data_manager.html', {'tempList': tempList, 'tableList': tableList})
 
+#从前端获取到表名
 def getTable(request):
     # 获取表名
     table = request.POST['databaseTable']
@@ -37,23 +38,17 @@ def getTable(request):
     #将数据库表名存入session
     request.session['table'] = table
 
-    #print(table)
+    #连接数据库
     conn = pymysql.connect(host='127.0.0.1', port=3306, user='root', password='root', database='source')
     cursor = conn.cursor()
 
+    #获取本张表的所有字段
     sql = "select COLUMN_NAME from information_schema.COLUMNS where table_name = '%s'" % (table)
     count = cursor.execute(sql)
     aList = set()
     for i in range(count):
         aList.add(cursor.fetchone()[0])
 
-    # 获取当前用户的ID
-    username = request.session.get('username')
-    user = User.objects.get(username=username)
-    user_id = user.user_id
-
-    # 根据当前用户 查询所有的关系数据
-    tempList = Temp.objects.filter(user_id=user_id)
 
     count = cursor.execute("show tables")
     tableList = list()
@@ -66,9 +61,9 @@ def getTable(request):
     sql = "select TABLE_NAME,COLUMN_NAME,CONSTRAINT_NAME from INFORMATION_SCHEMA.KEY_COLUMN_USAGE where CONSTRAINT_SCHEMA ='source' AND REFERENCED_TABLE_NAME = '%s';" % (table)
     count = (cursor.execute(sql))
     bList = set()
+    primary2 = []
     if count > 0:
-        for i in range(count):
-            re = cursor.fetchone()
+        re = cursor.fetchone()
 
         request.session['table2'] = re[0]
         request.session['re_name'] = re[1]
@@ -78,11 +73,33 @@ def getTable(request):
 
         for i in range(count):
             bList.add(cursor.fetchone()[0])
+        sql3 = "SELECT  COLUMN_NAME FROM INFORMATION_SCHEMA.`KEY_COLUMN_USAGE` WHERE table_name='%s' AND constraint_name='PRIMARY'" % (
+            re[0])
+        count = cursor.execute(sql3)
+        primary2 = cursor.fetchone()[0]
+        print(primary2, '999')
+
+    sql4 = "SELECT  COLUMN_NAME FROM INFORMATION_SCHEMA.`KEY_COLUMN_USAGE` WHERE table_name='%s' AND constraint_name='PRIMARY'" % (table)
+    count = cursor.execute(sql4)
+    primary = cursor.fetchone()
+    print(primary[0], '00')
+
+
+
 
     cursor.close()  # 关闭游标
     conn.close()  # 关闭连接
 
-    return render(request, 'data_manager.html', {'tempList': tempList, 'tableList': tableList, 'aList': aList, 'table': table, 'bList': bList})
+    # 获取当前用户的ID
+    username = request.session.get('username')
+    user = User.objects.get(username=username)
+    user_id = user.user_id
+
+    # 根据当前用户 查询所有的关系数据
+    tempList = Temp.objects.filter(user_id=user_id)
+
+
+    return render(request, 'data_manager.html', {'tempList': tempList, 'tableList': tableList, 'aList': aList, 'table': table, 'bList': bList, 'primary': primary[0], 'primary2': primary2})
 
 
 # 从关系数据库中抽取知识
@@ -102,10 +119,12 @@ def d2neo4j(request):
         re_name = request.session.get('re_name')
         insertKnow(table2, entity_name2, re_name)
 
-    messages.success(request, "提取成功！")
+    messages.success(request, "知识抽取成功！")
     return redirect('/toDataManager/')
 
 def insertKnow(table2, entity_name2, re_name):
+    global sum
+    sum = 300
     conn = pymysql.connect(host='127.0.0.1', port=3306, user='root', password='root', database='source')
     cursor = conn.cursor()
     sql = "select %s, %s from %s" % (entity_name2, re_name, table2)
@@ -119,7 +138,8 @@ def insertKnow(table2, entity_name2, re_name):
         # 根据头实体和尾实体来查询之间的关系
         relation = Relation.objects.get(head_entity=headEntityType, tail_entity=tailEntityType)
         db = neo4jconn
-        db.insertRelation(result[0], relation.relation, result[1], '200')
+        sum+=1
+        db.insertRelation(result[0], relation.relation, result[1], str(sum))
 
 
 def insertNode(table, entity_name, entity_property):
@@ -158,6 +178,7 @@ def insertNode(table, entity_name, entity_property):
             db.createNode(name, type, dict)
     cursor.close()  # 关闭游标
     conn.close()  # 关闭连接
+
 
 # 将一条数据插入到Neo4j数据库
 def importNeo4j(request):
