@@ -24,42 +24,6 @@ def toDataManager(request):
 
 
 
-def insertNode(table, entity_name, entity_property):
-    conn = pymysql.connect(host='127.0.0.1', port=3306, user='root', password='root', database='source')
-    cursor = conn.cursor()
-
-    str=','.join(entity_property)
-    #print(str)
-
-    sql = "select %s, %s from %s" % (entity_name, str, table)
-    print(sql)
-    count = cursor.execute(sql)
-
-    dict={}
-    for i in range(count):
-        result = cursor.fetchone()
-        print(result)
-        result = list(result)
-        name = result[0]
-        # 获取字典的全部信息
-        dictionary_entity = Dictionary.objects.all()
-        # 实体类型
-        type = ""
-        for entity in dictionary_entity:
-            if entity.entity == name:
-                type = entity.entity_type
-                break
-        #print(type)
-
-        if type:
-            # 生成实体节点（是否插入属性）
-            result.remove(name)
-            for i in range(len(entity_property)):
-                dict.update({entity_property[i]: result[i]})
-            db = neo4jconn
-            db.createNode(name, type, dict)
-    cursor.close()  # 关闭游标
-    conn.close()  # 关闭连接
 
 
 # 将一条数据插入到Neo4j数据库
@@ -88,7 +52,7 @@ def importNeo4j(request):
         return redirect('/toDataManager/')
     elif result1:
         # 创建尾实体
-        db.createNode(relation.tailEntity, relation.tailEntityType)
+        db.createNode(relation.tailEntity, relation.tailEntityType, {})
         # 插入一条neo4j数据库信息
         db.insertRelation(relation.headEntity, relation.relationshipCategory, relation.tailEntity, id)
         temp = Temp.objects.get(temp_id=id)
@@ -97,7 +61,7 @@ def importNeo4j(request):
         return redirect('/toDataManager/')
     elif result2:
         # 创建头实体
-        db.createNode(relation.headEntity, relation.headEntityType)
+        db.createNode(relation.headEntity, relation.headEntityType, {})
         # 插入一条neo4j数据库信息
         db.insertRelation(relation.headEntity, relation.relationshipCategory, relation.tailEntity, id)
         temp = Temp.objects.get(temp_id=id)

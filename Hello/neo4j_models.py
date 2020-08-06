@@ -65,12 +65,13 @@ class Neo4j_Handle():
         return answer
 
     def findEntity(self, entity):
-        answer = self.graph.run("MATCH(x{name:\"" + entity + "\"}) return x").data()
+        answer = self.graph.run("MATCH(x) WHERE x.name = \"" + entity + "\" return x").data()
+        print(answer)
         return answer
 
     def insertRelation(self, entity1, relation, entity2, id):
         self.graph.run(
-            "MATCH(x{name:\"" + entity1 + "\"}),(y{name:\"" + entity2 + "\"}) CREATE (x)-[jx:" + relation + "{type: \"" + relation + "\", id: \"" + id + "\"}]->(y)")
+            "MATCH(x{name:\"" + entity1 + "\"}),(y{name:\"" + entity2 + "\"}) MERGE (x)-[jx:" + relation + "{type: \"" + relation + "\", id: \"" + id + "\"}]->(y)")
 
     def createNode(self, entity, type, dict):
         #str="MERGE(x:" + type + "{name:\"" + entity + "\"})"
