@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.urls import path
 
-from Hello.View import views, annotation_view, answer_view, dataManager_view, entity_view, relation_view, home_view
+from Hello.View import views, annotation_view, answer_view, dataManager_view, entity_view, relation_view, home_view, d2rq_view
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -15,6 +15,12 @@ urlpatterns = [
 
     #跳转到数据管理页面
     path('toDataManager/', dataManager_view.toDataManager),
+
+    #跳转到D2rq界面
+    path('toD2rq/', d2rq_view.toD2rq),
+
+
+
     #将一条数据插入到neo4j数据库
     path('importNeo4j/', dataManager_view.importNeo4j, name='importNeo4j'),
     #批量导入
@@ -24,9 +30,9 @@ urlpatterns = [
     #删除所有
     path('deleteAllNeo4j/', dataManager_view.deleteAllNeo4j, name='deleteAllNeo4j'),
     #获取选中的表名
-    path('getTable/', dataManager_view.getTable),
+    path('getTable/', d2rq_view.getTable),
     ##从关系数据库中抽取知识
-    path('d2neo4j/', dataManager_view.d2neo4j),
+    path('d2neo4j/', d2rq_view.d2neo4j),
 
     #文本标注文件上传
     path('upload/', dataManager_view.upload),

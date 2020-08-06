@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 50648
 File Encoding         : 65001
 
-Date: 2020-07-10 00:07:09
+Date: 2020-08-06 17:31:17
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -61,7 +61,7 @@ CREATE TABLE `auth_permission` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `auth_permission_content_type_id_codename_01ab375a_uniq` (`content_type_id`,`codename`),
   CONSTRAINT `auth_permission_content_type_id_2f476e4b_fk_django_co` FOREIGN KEY (`content_type_id`) REFERENCES `django_content_type` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=49 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=57 DEFAULT CHARSET=utf8mb4;
 
 -- ----------------------------
 -- Records of auth_permission
@@ -114,6 +114,14 @@ INSERT INTO `auth_permission` VALUES ('45', 'Can add temp', '12', 'add_temp');
 INSERT INTO `auth_permission` VALUES ('46', 'Can change temp', '12', 'change_temp');
 INSERT INTO `auth_permission` VALUES ('47', 'Can delete temp', '12', 'delete_temp');
 INSERT INTO `auth_permission` VALUES ('48', 'Can view temp', '12', 'view_temp');
+INSERT INTO `auth_permission` VALUES ('49', 'Can add aircraft', '13', 'add_aircraft');
+INSERT INTO `auth_permission` VALUES ('50', 'Can change aircraft', '13', 'change_aircraft');
+INSERT INTO `auth_permission` VALUES ('51', 'Can delete aircraft', '13', 'delete_aircraft');
+INSERT INTO `auth_permission` VALUES ('52', 'Can view aircraft', '13', 'view_aircraft');
+INSERT INTO `auth_permission` VALUES ('53', 'Can add model', '14', 'add_model');
+INSERT INTO `auth_permission` VALUES ('54', 'Can change model', '14', 'change_model');
+INSERT INTO `auth_permission` VALUES ('55', 'Can delete model', '14', 'delete_model');
+INSERT INTO `auth_permission` VALUES ('56', 'Can view model', '14', 'view_model');
 
 -- ----------------------------
 -- Table structure for auth_user
@@ -211,7 +219,7 @@ CREATE TABLE `django_content_type` (
   `model` varchar(100) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `django_content_type_app_label_model_76bd3d3b_uniq` (`app_label`,`model`)
-) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8mb4;
 
 -- ----------------------------
 -- Records of django_content_type
@@ -221,9 +229,11 @@ INSERT INTO `django_content_type` VALUES ('3', 'auth', 'group');
 INSERT INTO `django_content_type` VALUES ('2', 'auth', 'permission');
 INSERT INTO `django_content_type` VALUES ('4', 'auth', 'user');
 INSERT INTO `django_content_type` VALUES ('5', 'contenttypes', 'contenttype');
+INSERT INTO `django_content_type` VALUES ('13', 'Hello', 'aircraft');
 INSERT INTO `django_content_type` VALUES ('7', 'Hello', 'annotation');
 INSERT INTO `django_content_type` VALUES ('8', 'Hello', 'dictionary');
 INSERT INTO `django_content_type` VALUES ('9', 'Hello', 'log');
+INSERT INTO `django_content_type` VALUES ('14', 'Hello', 'model');
 INSERT INTO `django_content_type` VALUES ('10', 'Hello', 'relation');
 INSERT INTO `django_content_type` VALUES ('12', 'Hello', 'temp');
 INSERT INTO `django_content_type` VALUES ('11', 'Hello', 'user');
@@ -239,7 +249,7 @@ CREATE TABLE `django_migrations` (
   `name` varchar(255) NOT NULL,
   `applied` datetime(6) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=20 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=21 DEFAULT CHARSET=utf8mb4;
 
 -- ----------------------------
 -- Records of django_migrations
@@ -263,6 +273,7 @@ INSERT INTO `django_migrations` VALUES ('16', 'auth', '0010_alter_group_name_max
 INSERT INTO `django_migrations` VALUES ('17', 'auth', '0011_update_proxy_permissions', '2020-07-07 11:38:21.285144');
 INSERT INTO `django_migrations` VALUES ('18', 'sessions', '0001_initial', '2020-07-07 11:38:21.313064');
 INSERT INTO `django_migrations` VALUES ('19', 'Hello', '0002_auto_20200708_1225', '2020-07-08 04:25:12.657502');
+INSERT INTO `django_migrations` VALUES ('20', 'Hello', '0003_aircraft_model', '2020-07-21 05:02:44.540064');
 
 -- ----------------------------
 -- Table structure for django_session
@@ -279,7 +290,27 @@ CREATE TABLE `django_session` (
 -- ----------------------------
 -- Records of django_session
 -- ----------------------------
-INSERT INTO `django_session` VALUES ('3f5rb88u8svtdgtwhc3xez1tgs41ryf7', 'ODM3MGNhYzQ0ZWRjYmVjMzNlYjJmYzZiMGJjYjI1NDhiOWZmNzdkNzp7InVzZXJuYW1lIjoidGVzdCIsImVudGl0eTEiOiJYXHU1NzhiXHU5OGRlXHU2NzNhIiwicmVsYXRpb24iOiIiLCJlbnRpdHkyIjoiIn0=', '2020-07-23 14:14:44.249836');
+INSERT INTO `django_session` VALUES ('3f5rb88u8svtdgtwhc3xez1tgs41ryf7', 'ODU2ZTYyMGY4NGFkNmI5MzdlNTY4YmJiZmNkZGI2ZmVhNTQwNGNlZTp7InVzZXJuYW1lIjoidGVzdDIiLCJlbnRpdHkxIjoiWFx1NTc4Ylx1OThkZVx1NjczYSIsInJlbGF0aW9uIjoiXHU1M2MyXHU4MDAzIiwiZW50aXR5MiI6IiIsImVudGl0eSI6IlhcdTU3OGJcdTk4ZGVcdTY3M2EifQ==', '2020-07-27 14:53:17.616299');
+INSERT INTO `django_session` VALUES ('fxqn6yqo7s6wg3vnc4xqsidcvqbwz0j5', 'YjEyNmY3NTkzNTI3MzU2MjhlY2Q2MTRjNjFmZGU1YTkyY2Y4NjY3MTp7InVzZXJuYW1lIjoidGVzdCJ9', '2020-07-28 17:27:33.163887');
+INSERT INTO `django_session` VALUES ('hvfqa22f89l3brf1uqgtca2s3z1xagfb', 'YjEyNmY3NTkzNTI3MzU2MjhlY2Q2MTRjNjFmZGU1YTkyY2Y4NjY3MTp7InVzZXJuYW1lIjoidGVzdCJ9', '2020-07-28 17:39:38.711076');
+INSERT INTO `django_session` VALUES ('l0sf3atw0rl5yilocokex1x4z5cl8wj6', 'MDlkYTIyN2Y1MjVmMjMwZTFiODhmMDQyNDViODE2ZGM5YTYyOGJhZjp7InVzZXJuYW1lIjoidGVzdCIsImVudGl0eTEiOiJYXHU1NzhiXHU5OGRlXHU2NzNhIiwicmVsYXRpb24iOiIiLCJlbnRpdHkyIjoiIiwidGFibGUiOiJtb2RlbCIsInRhYmxlMiI6ImFpcmNyYWZ0IiwicmVfbmFtZSI6Im1vZGVsX25hbWUifQ==', '2020-08-20 09:30:26.719166');
+INSERT INTO `django_session` VALUES ('zj9807vju7j2fa90lvl2y55b7os8m2iz', 'YjEyNmY3NTkzNTI3MzU2MjhlY2Q2MTRjNjFmZGU1YTkyY2Y4NjY3MTp7InVzZXJuYW1lIjoidGVzdCJ9', '2020-07-28 17:43:16.028754');
+
+-- ----------------------------
+-- Table structure for hello_aircraft
+-- ----------------------------
+DROP TABLE IF EXISTS `hello_aircraft`;
+CREATE TABLE `hello_aircraft` (
+  `aircraft_id` int(11) NOT NULL AUTO_INCREMENT,
+  `aircraft_name` varchar(100) NOT NULL,
+  `description` varchar(200) NOT NULL,
+  PRIMARY KEY (`aircraft_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4;
+
+-- ----------------------------
+-- Records of hello_aircraft
+-- ----------------------------
+INSERT INTO `hello_aircraft` VALUES ('1', 'X型飞机', 'AA');
 
 -- ----------------------------
 -- Table structure for hello_annotation
@@ -294,7 +325,7 @@ CREATE TABLE `hello_annotation` (
   PRIMARY KEY (`annotation_id`),
   KEY `Hello_annotation_user_id_id_ad6732e5_fk_Hello_user_user_id` (`user_id_id`),
   CONSTRAINT `Hello_annotation_user_id_id_ad6732e5_fk_Hello_user_user_id` FOREIGN KEY (`user_id_id`) REFERENCES `hello_user` (`user_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=150 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=248 DEFAULT CHARSET=utf8mb4;
 
 -- ----------------------------
 -- Records of hello_annotation
@@ -410,7 +441,105 @@ INSERT INTO `hello_annotation` VALUES ('145', '保障系统是X型飞机的重�
 INSERT INTO `hello_annotation` VALUES ('146', '战斗机往往携带巡航导弹执行任务。', '1', 'data2.txt', '1');
 INSERT INTO `hello_annotation` VALUES ('147', '其中，平尾承力布置数模的设计按照标准《18D-WXSM-B-121》执行。', '1', 'data2.txt', '1');
 INSERT INTO `hello_annotation` VALUES ('148', '保障系统是X型飞机的重要组成部分，其使用可用度应不小于0.9，维修时间应不大于2小时。', '1', 'data2.txt', '1');
-INSERT INTO `hello_annotation` VALUES ('149', '战斗机往往携带巡航导弹执行任务。', '0', 'data2.txt', '1');
+INSERT INTO `hello_annotation` VALUES ('149', '战斗机往往携带巡航导弹执行任务。', '1', 'data2.txt', '1');
+INSERT INTO `hello_annotation` VALUES ('150', '在X型飞机的设计建模过程中，涉及到平尾承力布置数模、前机身承力构建布置数模、外形数模等多种数学模型。', '1', 'data.txt', '1');
+INSERT INTO `hello_annotation` VALUES ('151', '其中，平尾承力布置数模的设计按照标准《18D-WXSM-B-121》执行。', '1', 'data.txt', '1');
+INSERT INTO `hello_annotation` VALUES ('152', '保障系统是X型飞机的重要组成部分，其使用可用度应不小于0.9，维修时间应不大于2小时。', '1', 'data.txt', '1');
+INSERT INTO `hello_annotation` VALUES ('153', '战斗机往往携带巡航导弹执行任务。', '1', 'data.txt', '1');
+INSERT INTO `hello_annotation` VALUES ('154', '战斗机的维修时间大约半个月左右。', '1', 'data.txt', '1');
+INSERT INTO `hello_annotation` VALUES ('155', '在X型飞机的设计建模过程中，涉及到平尾承力布置数模、前机身承力构建布置数模、外形数模等多种数学模型。', '1', 'data.txt', '1');
+INSERT INTO `hello_annotation` VALUES ('156', '其中，平尾承力布置数模的设计按照标准《18D-WXSM-B-121》执行。', '1', 'data.txt', '1');
+INSERT INTO `hello_annotation` VALUES ('157', '保障系统是X型飞机的重要组成部分，其使用可用度应不小于0.9，维修时间应不大于2小时。', '1', 'data.txt', '1');
+INSERT INTO `hello_annotation` VALUES ('158', '战斗机往往携带巡航导弹执行任务。', '1', 'data.txt', '1');
+INSERT INTO `hello_annotation` VALUES ('159', '战斗机的维修时间大约半个月左右。', '1', 'data.txt', '1');
+INSERT INTO `hello_annotation` VALUES ('160', '在X型飞机的设计建模过程中，涉及到平尾承力布置数模、前机身承力构建布置数模、外形数模等多种数学模型。', '1', 'data.txt', '1');
+INSERT INTO `hello_annotation` VALUES ('161', '其中，平尾承力布置数模的设计按照标准《18D-WXSM-B-121》执行。', '1', 'data.txt', '1');
+INSERT INTO `hello_annotation` VALUES ('162', '保障系统是X型飞机的重要组成部分，其使用可用度应不小于0.9，维修时间应不大于2小时。', '1', 'data.txt', '1');
+INSERT INTO `hello_annotation` VALUES ('163', '战斗机往往携带巡航导弹执行任务。', '1', 'data.txt', '1');
+INSERT INTO `hello_annotation` VALUES ('164', '战斗机的维修时间大约半个月左右。', '1', 'data.txt', '1');
+INSERT INTO `hello_annotation` VALUES ('165', '在X型飞机的设计建模过程中，涉及到平尾承力布置数模、前机身承力构建布置数模、外形数模等多种数学模型。', '1', 'data.txt', '1');
+INSERT INTO `hello_annotation` VALUES ('166', '其中，平尾承力布置数模的设计按照标准《18D-WXSM-B-121》执行。', '1', 'data.txt', '1');
+INSERT INTO `hello_annotation` VALUES ('167', '保障系统是X型飞机的重要组成部分，其使用可用度应不小于0.9，维修时间应不大于2小时。', '1', 'data.txt', '1');
+INSERT INTO `hello_annotation` VALUES ('168', '战斗机往往携带巡航导弹执行任务。', '1', 'data.txt', '1');
+INSERT INTO `hello_annotation` VALUES ('169', '战斗机的维修时间大约半个月左右。', '1', 'data.txt', '1');
+INSERT INTO `hello_annotation` VALUES ('170', '在X型飞机的设计建模过程中，涉及到平尾承力布置数模、前机身承力构建布置数模、外形数模等多种数学模型。', '1', 'data.txt', '1');
+INSERT INTO `hello_annotation` VALUES ('171', '其中，平尾承力布置数模的设计按照标准《18D-WXSM-B-121》执行。', '1', 'data.txt', '1');
+INSERT INTO `hello_annotation` VALUES ('172', '保障系统是X型飞机的重要组成部分，其使用可用度应不小于0.9，维修时间应不大于2小时。', '1', 'data.txt', '1');
+INSERT INTO `hello_annotation` VALUES ('173', '战斗机往往携带巡航导弹执行任务。', '1', 'data.txt', '1');
+INSERT INTO `hello_annotation` VALUES ('174', '战斗机的维修时间大约半个月左右。', '1', 'data.txt', '1');
+INSERT INTO `hello_annotation` VALUES ('175', 'X型飞机的设计采用《IO868-P-90》标准。', '1', 'data.txt', '1');
+INSERT INTO `hello_annotation` VALUES ('176', '在X型飞机的设计建模过程中，涉及到平尾承力布置数模、前机身承力构建布置数模、外形数模等多种数学模型。', '1', 'data.txt', '1');
+INSERT INTO `hello_annotation` VALUES ('177', '其中，平尾承力布置数模的设计按照标准《18D-WXSM-B-121》执行。', '1', 'data.txt', '1');
+INSERT INTO `hello_annotation` VALUES ('178', '保障系统是X型飞机的重要组成部分，其使用可用度应不小于0.9，维修时间应不大于2小时。', '1', 'data.txt', '1');
+INSERT INTO `hello_annotation` VALUES ('179', '战斗机往往携带巡航导弹执行任务。', '1', 'data.txt', '1');
+INSERT INTO `hello_annotation` VALUES ('180', '战斗机的维修时间大约半个月左右。', '1', 'data.txt', '1');
+INSERT INTO `hello_annotation` VALUES ('181', 'X型飞机的设计采用《IO868-P-90》标准。', '1', 'data.txt', '1');
+INSERT INTO `hello_annotation` VALUES ('182', '在X型飞机的设计建模过程中，涉及到平尾承力布置数模、前机身承力构建布置数模、外形数模等多种数学模型。', '1', 'data.txt', '1');
+INSERT INTO `hello_annotation` VALUES ('183', '其中，平尾承力布置数模的设计按照标准《18D-WXSM-B-121》执行。', '1', 'data.txt', '1');
+INSERT INTO `hello_annotation` VALUES ('184', '保障系统是X型飞机的重要组成部分，其使用可用度应不小于0.9，维修时间应不大于2小时。', '1', 'data.txt', '1');
+INSERT INTO `hello_annotation` VALUES ('185', '战斗机往往携带巡航导弹执行任务。', '1', 'data.txt', '1');
+INSERT INTO `hello_annotation` VALUES ('186', '战斗机的维修时间大约半个月左右。', '1', 'data.txt', '1');
+INSERT INTO `hello_annotation` VALUES ('187', 'X型飞机的设计采用《IO868-P-90》标准。', '1', 'data.txt', '1');
+INSERT INTO `hello_annotation` VALUES ('188', '在X型飞机的设计建模过程中，涉及到平尾承力布置数模、前机身承力构建布置数模、外形数模等多种数学模型。', '1', 'data.txt', '4');
+INSERT INTO `hello_annotation` VALUES ('189', '其中，平尾承力布置数模的设计按照标准《18D-WXSM-B-121》执行。', '1', 'data.txt', '4');
+INSERT INTO `hello_annotation` VALUES ('190', '保障系统是X型飞机的重要组成部分，其使用可用度应不小于0.9，维修时间应不大于2小时。', '1', 'data.txt', '4');
+INSERT INTO `hello_annotation` VALUES ('191', '战斗机往往携带巡航导弹执行任务。', '1', 'data.txt', '4');
+INSERT INTO `hello_annotation` VALUES ('192', '战斗机的维修时间大约半个月左右。', '1', 'data.txt', '4');
+INSERT INTO `hello_annotation` VALUES ('193', 'X型飞机的设计采用《IO868-P-90》标准。', '1', 'data.txt', '4');
+INSERT INTO `hello_annotation` VALUES ('194', '在X型飞机的设计建模过程中，涉及到平尾承力布置数模、前机身承力构建布置数模、外形数模等多种数学模型。', '1', 'data.txt', '4');
+INSERT INTO `hello_annotation` VALUES ('195', '其中，平尾承力布置数模的设计按照标准《18D-WXSM-B-121》执行。', '1', 'data.txt', '4');
+INSERT INTO `hello_annotation` VALUES ('196', '保障系统是X型飞机的重要组成部分，其使用可用度应不小于0.9，维修时间应不大于2小时。', '1', 'data.txt', '4');
+INSERT INTO `hello_annotation` VALUES ('197', '战斗机往往携带巡航导弹执行任务。', '1', 'data.txt', '4');
+INSERT INTO `hello_annotation` VALUES ('198', '战斗机的维修时间大约半个月左右。', '1', 'data.txt', '4');
+INSERT INTO `hello_annotation` VALUES ('199', 'X型飞机的设计采用《IO868-P-90》标准。', '1', 'data.txt', '4');
+INSERT INTO `hello_annotation` VALUES ('200', '在X型飞机的设计建模过程中，涉及到平尾承力布置数模、前机身承力构建布置数模、外形数模等多种数学模型。', '1', 'data.txt', '4');
+INSERT INTO `hello_annotation` VALUES ('201', '其中，平尾承力布置数模的设计按照标准《18D-WXSM-B-121》执行。', '1', 'data.txt', '4');
+INSERT INTO `hello_annotation` VALUES ('202', '保障系统是X型飞机的重要组成部分，其使用可用度应不小于0.9，维修时间应不大于2小时。', '1', 'data.txt', '4');
+INSERT INTO `hello_annotation` VALUES ('203', '战斗机往往携带巡航导弹执行任务。', '1', 'data.txt', '4');
+INSERT INTO `hello_annotation` VALUES ('204', '战斗机的维修时间大约半个月左右。', '1', 'data.txt', '4');
+INSERT INTO `hello_annotation` VALUES ('205', 'X型飞机的设计采用《IO868-P-90》标准。', '1', 'data.txt', '4');
+INSERT INTO `hello_annotation` VALUES ('206', '在X型飞机的设计建模过程中，涉及到平尾承力布置数模、前机身承力构建布置数模、外形数模等多种数学模型。', '1', 'data.txt', '4');
+INSERT INTO `hello_annotation` VALUES ('207', '其中，平尾承力布置数模的设计按照标准《18D-WXSM-B-121》执行。', '1', 'data.txt', '4');
+INSERT INTO `hello_annotation` VALUES ('208', '保障系统是X型飞机的重要组成部分，其使用可用度应不小于0.9，维修时间应不大于2小时。', '1', 'data.txt', '4');
+INSERT INTO `hello_annotation` VALUES ('209', '战斗机往往携带巡航导弹执行任务。', '1', 'data.txt', '4');
+INSERT INTO `hello_annotation` VALUES ('210', '战斗机的维修时间大约半个月左右。', '1', 'data.txt', '4');
+INSERT INTO `hello_annotation` VALUES ('211', 'X型飞机的设计采用《IO868-P-90》标准。', '1', 'data.txt', '4');
+INSERT INTO `hello_annotation` VALUES ('212', '在X型飞机的设计建模过程中，涉及到平尾承力布置数模、前机身承力构建布置数模、外形数模等多种数学模型。', '1', 'data.txt', '4');
+INSERT INTO `hello_annotation` VALUES ('213', '其中，平尾承力布置数模的设计按照标准《18D-WXSM-B-121》执行。', '1', 'data.txt', '4');
+INSERT INTO `hello_annotation` VALUES ('214', '保障系统是X型飞机的重要组成部分，其使用可用度应不小于0.9，维修时间应不大于2小时。', '1', 'data.txt', '4');
+INSERT INTO `hello_annotation` VALUES ('215', '战斗机往往携带巡航导弹执行任务。', '1', 'data.txt', '4');
+INSERT INTO `hello_annotation` VALUES ('216', '战斗机的维修时间大约半个月左右。', '1', 'data.txt', '4');
+INSERT INTO `hello_annotation` VALUES ('217', 'X型飞机的设计采用《IO868-P-90》标准。', '1', 'data.txt', '4');
+INSERT INTO `hello_annotation` VALUES ('218', '在X型飞机的设计建模过程中，涉及到平尾承力布置数模、前机身承力构建布置数模、外形数模等多种数学模型。', '1', 'data.txt', '4');
+INSERT INTO `hello_annotation` VALUES ('219', '其中，平尾承力布置数模的设计按照标准《18D-WXSM-B-121》执行。', '1', 'data.txt', '4');
+INSERT INTO `hello_annotation` VALUES ('220', '保障系统是X型飞机的重要组成部分，其使用可用度应不小于0.9，维修时间应不大于2小时。', '0', 'data.txt', '4');
+INSERT INTO `hello_annotation` VALUES ('221', '战斗机往往携带巡航导弹执行任务。', '0', 'data.txt', '4');
+INSERT INTO `hello_annotation` VALUES ('222', '战斗机的维修时间大约半个月左右。', '0', 'data.txt', '4');
+INSERT INTO `hello_annotation` VALUES ('223', 'X型飞机的设计采用《IO868-P-90》标准。', '0', 'data.txt', '4');
+INSERT INTO `hello_annotation` VALUES ('224', '在X型飞机的设计建模过程中，涉及到平尾承力布置数模、前机身承力构建布置数模、外形数模等多种数学模型。', '1', 'data.txt', '1');
+INSERT INTO `hello_annotation` VALUES ('225', '其中，平尾承力布置数模的设计按照标准《18D-WXSM-B-121》执行。', '1', 'data.txt', '1');
+INSERT INTO `hello_annotation` VALUES ('226', '保障系统是X型飞机的重要组成部分，其使用可用度应不小于0.9，维修时间应不大于2小时。', '1', 'data.txt', '1');
+INSERT INTO `hello_annotation` VALUES ('227', '战斗机往往携带巡航导弹执行任务。', '1', 'data.txt', '1');
+INSERT INTO `hello_annotation` VALUES ('228', '战斗机的维修时间大约半个月左右。', '1', 'data.txt', '1');
+INSERT INTO `hello_annotation` VALUES ('229', 'X型飞机的设计采用《IO868-P-90》标准。', '1', 'data.txt', '1');
+INSERT INTO `hello_annotation` VALUES ('230', '在X型飞机的设计建模过程中，涉及到平尾承力布置数模、前机身承力构建布置数模、外形数模等多种数学模型。', '1', 'data.txt', '1');
+INSERT INTO `hello_annotation` VALUES ('231', '其中，平尾承力布置数模的设计按照标准《18D-WXSM-B-121》执行。', '1', 'data.txt', '1');
+INSERT INTO `hello_annotation` VALUES ('232', '保障系统是X型飞机的重要组成部分，其使用可用度应不小于0.9，维修时间应不大于2小时。', '1', 'data.txt', '1');
+INSERT INTO `hello_annotation` VALUES ('233', '战斗机往往携带巡航导弹执行任务。', '1', 'data.txt', '1');
+INSERT INTO `hello_annotation` VALUES ('234', '战斗机的维修时间大约半个月左右。', '1', 'data.txt', '1');
+INSERT INTO `hello_annotation` VALUES ('235', 'X型飞机的设计采用《IO868-P-90》标准。', '1', 'data.txt', '1');
+INSERT INTO `hello_annotation` VALUES ('236', '在X型飞机的设计建模过程中，涉及到平尾承力布置数模、前机身承力构建布置数模、外形数模等多种数学模型。', '1', 'data.txt', '1');
+INSERT INTO `hello_annotation` VALUES ('237', '其中，平尾承力布置数模的设计按照标准《18D-WXSM-B-121》执行。', '1', 'data.txt', '1');
+INSERT INTO `hello_annotation` VALUES ('238', '保障系统是X型飞机的重要组成部分，其使用可用度应不小于0.9，维修时间应不大于2小时。', '1', 'data.txt', '1');
+INSERT INTO `hello_annotation` VALUES ('239', '战斗机往往携带巡航导弹执行任务。', '1', 'data.txt', '1');
+INSERT INTO `hello_annotation` VALUES ('240', '战斗机的维修时间大约半个月左右。', '1', 'data.txt', '1');
+INSERT INTO `hello_annotation` VALUES ('241', 'X型飞机的设计采用《IO868-P-90》标准。', '1', 'data.txt', '1');
+INSERT INTO `hello_annotation` VALUES ('242', '在X型飞机的设计建模过程中，涉及到平尾承力布置数模、前机身承力构建布置数模、外形数模等多种数学模型。', '1', 'data.txt', '1');
+INSERT INTO `hello_annotation` VALUES ('243', '其中，平尾承力布置数模的设计按照标准《18D-WXSM-B-121》执行。', '1', 'data.txt', '1');
+INSERT INTO `hello_annotation` VALUES ('244', '保障系统是X型飞机的重要组成部分，其使用可用度应不小于0.9，维修时间应不大于2小时。', '1', 'data.txt', '1');
+INSERT INTO `hello_annotation` VALUES ('245', '战斗机往往携带巡航导弹执行任务。', '1', 'data.txt', '1');
+INSERT INTO `hello_annotation` VALUES ('246', '战斗机的维修时间大约半个月左右。', '0', 'data.txt', '1');
+INSERT INTO `hello_annotation` VALUES ('247', 'X型飞机的设计采用《IO868-P-90》标准。', '0', 'data.txt', '1');
 
 -- ----------------------------
 -- Table structure for hello_dictionary
@@ -421,7 +550,7 @@ CREATE TABLE `hello_dictionary` (
   `entity` varchar(100) NOT NULL,
   `entity_type` varchar(100) NOT NULL,
   PRIMARY KEY (`dictionary_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8mb4;
 
 -- ----------------------------
 -- Records of hello_dictionary
@@ -437,6 +566,10 @@ INSERT INTO `hello_dictionary` VALUES ('8', '使用可用度', '性能指标');
 INSERT INTO `hello_dictionary` VALUES ('9', '维修时间', '性能指标');
 INSERT INTO `hello_dictionary` VALUES ('10', '再次出动时间', '性能指标');
 INSERT INTO `hello_dictionary` VALUES ('11', '18D-WXSM-B-121', '参考文档');
+INSERT INTO `hello_dictionary` VALUES ('12', 'IO868-P-90', '参考文档');
+INSERT INTO `hello_dictionary` VALUES ('13', 'Y型飞机', '航空器');
+INSERT INTO `hello_dictionary` VALUES ('14', 'Z型飞机', '航空器');
+INSERT INTO `hello_dictionary` VALUES ('15', '波音747', '航空器');
 
 -- ----------------------------
 -- Table structure for hello_log
@@ -447,13 +580,29 @@ CREATE TABLE `hello_log` (
   `annotation_id` varchar(10) NOT NULL,
   `user_id` varchar(10) NOT NULL,
   PRIMARY KEY (`log_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4;
 
 -- ----------------------------
 -- Records of hello_log
 -- ----------------------------
-INSERT INTO `hello_log` VALUES ('1', '148', '1');
+INSERT INTO `hello_log` VALUES ('1', '245', '1');
 INSERT INTO `hello_log` VALUES ('2', '5', '3');
+INSERT INTO `hello_log` VALUES ('3', '219', '4');
+
+-- ----------------------------
+-- Table structure for hello_model
+-- ----------------------------
+DROP TABLE IF EXISTS `hello_model`;
+CREATE TABLE `hello_model` (
+  `model_id` int(11) NOT NULL AUTO_INCREMENT,
+  `model_name` varchar(100) NOT NULL,
+  `description` varchar(200) NOT NULL,
+  PRIMARY KEY (`model_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- ----------------------------
+-- Records of hello_model
+-- ----------------------------
 
 -- ----------------------------
 -- Table structure for hello_relation
@@ -465,7 +614,7 @@ CREATE TABLE `hello_relation` (
   `tail_entity` varchar(100) NOT NULL,
   `relation` varchar(100) NOT NULL,
   PRIMARY KEY (`relation_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4;
 
 -- ----------------------------
 -- Records of hello_relation
@@ -478,6 +627,7 @@ INSERT INTO `hello_relation` VALUES ('5', '数学模型', '参考文档', '参�
 INSERT INTO `hello_relation` VALUES ('6', '航空器', '性能指标', '性能指标');
 INSERT INTO `hello_relation` VALUES ('7', '性能指标', '参数值', '性能指标');
 INSERT INTO `hello_relation` VALUES ('8', '人物', '身高', '属于');
+INSERT INTO `hello_relation` VALUES ('9', '航空器', '参考文档', '参考');
 
 -- ----------------------------
 -- Table structure for hello_temp
@@ -496,24 +646,60 @@ CREATE TABLE `hello_temp` (
   PRIMARY KEY (`temp_id`),
   KEY `Hello_temp_annotation_id_id_86881eb9_fk_Hello_ann` (`annotation_id_id`),
   CONSTRAINT `Hello_temp_annotation_id_id_86881eb9_fk_Hello_ann` FOREIGN KEY (`annotation_id_id`) REFERENCES `hello_annotation` (`annotation_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=329 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=489 DEFAULT CHARSET=utf8mb4;
 
 -- ----------------------------
 -- Records of hello_temp
 -- ----------------------------
-INSERT INTO `hello_temp` VALUES ('314', 'X型飞机', '航空器', '保障系统', '系统', '组成', '1', 'data2.txt', '142');
-INSERT INTO `hello_temp` VALUES ('315', 'X型飞机', '航空器', '使用可用度', '性能指标', '性能指标', '1', 'data2.txt', '142');
-INSERT INTO `hello_temp` VALUES ('316', 'X型飞机', '航空器', '维修时间', '性能指标', '性能指标', '1', 'data2.txt', '142');
-INSERT INTO `hello_temp` VALUES ('317', '战斗机', '航空器', '巡航导弹', '武器', '使用', '1', 'data2.txt', '143');
-INSERT INTO `hello_temp` VALUES ('318', '平尾承力布置数模', '数学模型', '18D-WXSM-B-121', '参考文档', '参考', '1', 'data2.txt', '144');
-INSERT INTO `hello_temp` VALUES ('321', 'X型飞机', '航空器', '维修时间', '性能指标', '性能指标', '1', 'data2.txt', '145');
-INSERT INTO `hello_temp` VALUES ('322', '战斗机', '航空器', '巡航导弹', '武器', '使用', '1', 'data2.txt', '146');
-INSERT INTO `hello_temp` VALUES ('323', '战斗机', '航空器', '巡航导弹', '武器', '使用', '1', 'data2.txt', '146');
-INSERT INTO `hello_temp` VALUES ('324', '战斗机', '航空器', '巡航导弹', '武器', '使用', '1', 'data2.txt', '146');
-INSERT INTO `hello_temp` VALUES ('325', '平尾承力布置数模', '数学模型', '18D-WXSM-B-121', '参考文档', '参考', '1', 'data2.txt', '147');
-INSERT INTO `hello_temp` VALUES ('326', 'X型飞机', '航空器', '保障系统', '系统', '组成', '1', 'data2.txt', '148');
-INSERT INTO `hello_temp` VALUES ('327', 'X型飞机', '航空器', '使用可用度', '性能指标', '性能指标', '1', 'data2.txt', '148');
-INSERT INTO `hello_temp` VALUES ('328', 'X型飞机', '航空器', '维修时间', '性能指标', '性能指标', '1', 'data2.txt', '148');
+INSERT INTO `hello_temp` VALUES ('402', 'X型飞机', '航空器', '平尾承力布置数模', '数学模型', '参考', '4', 'data.txt', '188');
+INSERT INTO `hello_temp` VALUES ('403', 'X型飞机', '航空器', '前机身承力构建布置数模', '数学模型', '参考', '4', 'data.txt', '188');
+INSERT INTO `hello_temp` VALUES ('404', 'X型飞机', '航空器', '外形数模', '数学模型', '参考', '4', 'data.txt', '188');
+INSERT INTO `hello_temp` VALUES ('405', '平尾承力布置数模', '数学模型', '18D-WXSM-B-121', '参考文档', '参考', '4', 'data.txt', '189');
+INSERT INTO `hello_temp` VALUES ('407', 'X型飞机', '航空器', '使用可用度', '性能指标', '性能指标', '4', 'data.txt', '190');
+INSERT INTO `hello_temp` VALUES ('408', 'X型飞机', '航空器', '维修时间', '性能指标', '性能指标', '4', 'data.txt', '190');
+INSERT INTO `hello_temp` VALUES ('409', '战斗机', '航空器', '巡航导弹', '武器', '使用', '4', 'data.txt', '191');
+INSERT INTO `hello_temp` VALUES ('412', '平尾承力布置数模', '数学模型', '18D-WXSM-B-121', '参考文档', '参考', '4', 'data.txt', '195');
+INSERT INTO `hello_temp` VALUES ('413', '战斗机', '航空器', '巡航导弹', '武器', '使用', '4', 'data.txt', '197');
+INSERT INTO `hello_temp` VALUES ('414', '战斗机', '航空器', '维修时间', '性能指标', '性能指标', '4', 'data.txt', '198');
+INSERT INTO `hello_temp` VALUES ('415', 'X型飞机', '航空器', 'IO868-P-90', '参考文档', '参考', '4', 'data.txt', '199');
+INSERT INTO `hello_temp` VALUES ('417', 'X型飞机', '航空器', '前机身承力构建布置数模', '数学模型', '参考', '4', 'data.txt', '200');
+INSERT INTO `hello_temp` VALUES ('418', 'X型飞机', '航空器', '外形数模', '数学模型', '参考', '4', 'data.txt', '200');
+INSERT INTO `hello_temp` VALUES ('419', '平尾承力布置数模', '数学模型', '18D-WXSM-B-121', '参考文档', '参考', '4', 'data.txt', '201');
+INSERT INTO `hello_temp` VALUES ('420', '战斗机', '武器', '维修时间', '性能指标', '性能指标', '4', 'data.txt', '201');
+INSERT INTO `hello_temp` VALUES ('421', 'X型飞机', '航空器', '保障系统', '系统', '组成', '4', 'data.txt', '202');
+INSERT INTO `hello_temp` VALUES ('422', 'X型飞机', '航空器', '使用可用度', '性能指标', '性能指标', '4', 'data.txt', '202');
+INSERT INTO `hello_temp` VALUES ('423', 'X型飞机', '航空器', '维修时间', '性能指标', '性能指标', '4', 'data.txt', '202');
+INSERT INTO `hello_temp` VALUES ('424', '战斗机', '航空器', '巡航导弹', '武器', '使用', '4', 'data.txt', '203');
+INSERT INTO `hello_temp` VALUES ('425', '战斗机', '航空器', '维修时间', '性能指标', '性能指标', '4', 'data.txt', '204');
+INSERT INTO `hello_temp` VALUES ('426', 'X型飞机', '航空器', '平尾承力布置数模', '数学模型', '参考', '4', 'data.txt', '206');
+INSERT INTO `hello_temp` VALUES ('427', 'X型飞机', '航空器', '前机身承力构建布置数模', '数学模型', '参考', '4', 'data.txt', '206');
+INSERT INTO `hello_temp` VALUES ('428', 'X型飞机', '航空器', '外形数模', '数学模型', '参考', '4', 'data.txt', '206');
+INSERT INTO `hello_temp` VALUES ('429', '平尾承力布置数模', '数学模型', '18D-WXSM-B-121', '参考文档', '参考', '4', 'data.txt', '207');
+INSERT INTO `hello_temp` VALUES ('430', 'X型飞机', '航空器', '保障系统', '系统', '组成', '4', 'data.txt', '208');
+INSERT INTO `hello_temp` VALUES ('431', 'X型飞机', '航空器', '使用可用度', '性能指标', '性能指标', '4', 'data.txt', '208');
+INSERT INTO `hello_temp` VALUES ('432', 'X型飞机', '航空器', '维修时间', '性能指标', '性能指标', '4', 'data.txt', '208');
+INSERT INTO `hello_temp` VALUES ('433', '战斗机', '航空器', '巡航导弹', '武器', '使用', '4', 'data.txt', '209');
+INSERT INTO `hello_temp` VALUES ('434', '战斗机', '航空器', '维修时间', '性能指标', '性能指标', '4', 'data.txt', '210');
+INSERT INTO `hello_temp` VALUES ('435', 'X型飞机', '航空器', 'IO868-P-90', '参考文档', '参考', '4', 'data.txt', '211');
+INSERT INTO `hello_temp` VALUES ('436', 'X型飞机', '航空器', '平尾承力布置数模', '数学模型', '参考', '4', 'data.txt', '212');
+INSERT INTO `hello_temp` VALUES ('437', 'X型飞机', '航空器', '前机身承力构建布置数模', '数学模型', '参考', '4', 'data.txt', '212');
+INSERT INTO `hello_temp` VALUES ('438', 'X型飞机', '航空器', '外形数模', '数学模型', '参考', '4', 'data.txt', '212');
+INSERT INTO `hello_temp` VALUES ('439', '平尾承力布置数模', '数学模型', '18D-WXSM-B-121', '参考文档', '参考', '4', 'data.txt', '213');
+INSERT INTO `hello_temp` VALUES ('440', 'X型飞机', '航空器', '保障系统', '系统', '组成', '4', 'data.txt', '214');
+INSERT INTO `hello_temp` VALUES ('441', 'X型飞机', '航空器', '使用可用度', '性能指标', '性能指标', '4', 'data.txt', '214');
+INSERT INTO `hello_temp` VALUES ('442', 'X型飞机', '航空器', '维修时间', '性能指标', '性能指标', '4', 'data.txt', '214');
+INSERT INTO `hello_temp` VALUES ('443', '战斗机', '航空器', '维修时间', '性能指标', '性能指标', '4', 'data.txt', '216');
+INSERT INTO `hello_temp` VALUES ('444', 'X型飞机', '航空器', 'IO868-P-90', '参考文档', '参考', '4', 'data.txt', '217');
+INSERT INTO `hello_temp` VALUES ('445', 'X型飞机', '航空器', '平尾承力布置数模', '数学模型', '参考', '4', 'data.txt', '218');
+INSERT INTO `hello_temp` VALUES ('446', 'X型飞机', '航空器', '前机身承力构建布置数模', '数学模型', '参考', '4', 'data.txt', '218');
+INSERT INTO `hello_temp` VALUES ('447', 'X型飞机', '航空器', '外形数模', '数学模型', '参考', '4', 'data.txt', '218');
+INSERT INTO `hello_temp` VALUES ('448', '平尾承力布置数模', '数学模型', '18D-WXSM-B-121', '参考文档', '参考', '4', 'data.txt', '219');
+INSERT INTO `hello_temp` VALUES ('483', 'X型飞机', '航空器', '外形数模', '数学模型', '参考', '1', 'data.txt', '242');
+INSERT INTO `hello_temp` VALUES ('484', '平尾承力布置数模', '数学模型', '18D-WXSM-B-121', '参考文档', '参考', '1', 'data.txt', '243');
+INSERT INTO `hello_temp` VALUES ('485', 'X型飞机', '航空器', '保障系统', '系统', '组成', '1', 'data.txt', '244');
+INSERT INTO `hello_temp` VALUES ('486', 'X型飞机', '航空器', '使用可用度', '性能指标', '性能指标', '1', 'data.txt', '244');
+INSERT INTO `hello_temp` VALUES ('487', 'X型飞机', '航空器', '维修时间', '性能指标', '性能指标', '1', 'data.txt', '244');
+INSERT INTO `hello_temp` VALUES ('488', '战斗机', '航空器', '巡航导弹', '武器', '使用', '1', 'data.txt', '245');
 
 -- ----------------------------
 -- Table structure for hello_user
@@ -524,10 +710,11 @@ CREATE TABLE `hello_user` (
   `username` varchar(20) NOT NULL,
   `password` varchar(20) NOT NULL,
   PRIMARY KEY (`user_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4;
 
 -- ----------------------------
 -- Records of hello_user
 -- ----------------------------
 INSERT INTO `hello_user` VALUES ('1', 'test', 'test');
 INSERT INTO `hello_user` VALUES ('3', 'liuke', 'test');
+INSERT INTO `hello_user` VALUES ('4', 'test2', 'test2');
