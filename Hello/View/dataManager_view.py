@@ -1,11 +1,10 @@
 import csv
 
-import pymysql
 from django.contrib import messages
 from django.shortcuts import render, redirect
 
 from Hello.View.relation_view import Screen
-from Hello.models import Annotation, User, Temp, Dictionary, Relation
+from Hello.models import Annotation, User, Temp
 from Hello.toolkit.pre_load import neo4jconn
 
 
@@ -19,11 +18,8 @@ def toDataManager(request):
     # 根据当前用户 查询所有的关系数据
     tempList = Temp.objects.filter(user_id=user_id)
 
-    #print(tableList)
+    # print(tableList)
     return render(request, 'data_manager.html', {'tempList': tempList})
-
-
-
 
 
 # 将一条数据插入到Neo4j数据库
@@ -138,13 +134,6 @@ def deleteNeo4j(request):
     temp = Temp.objects.get(temp_id=id)
     temp.delete()
 
-    # 获取当前用户的ID
-    username = request.session.get('username')
-    user = User.objects.get(username=username)
-    user_id = user.user_id
-
-    # 获取删除之后的Temp
-    tempList = Temp.objects.filter(user_id=user_id)
     return redirect('/toDataManager/')
 
 
@@ -164,28 +153,7 @@ def deleteAllNeo4j(request):
     return redirect('/toDataManager/')
 
 
-# 上传文件，并且将数据保存到数据库中
-def upload(request):
-    if request.method == 'POST':
-        # 获取文件名
-        file = request.FILES.get('file')
-        if file:
-            # 获取当前用户的id
-            username = request.session.get('username')
-            user = User.objects.get(username=username)
-            user_id = user.user_id
-            # 读取文件内容，并且插入到数据库中
-            with open(file.name, "r", encoding="utf-8") as lines:
-                data = lines.readlines()
-                for i in data:
-                    i = i.strip('\n')
-                    q = Annotation(content=i, file_name=file, flag=False, user_id_id=user_id)  # 将数据插入到数据库中
-                    q.save()
-            messages.success(request, "上传成功！")
-            return redirect('/toDataManager/')
-        else:
-            messages.success(request, "文件为空！")
-            return redirect('/toDataManager/')
+
 
 
 # 导出Neo4J数据库

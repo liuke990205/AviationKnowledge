@@ -2,7 +2,7 @@ import csv
 from itertools import combinations
 
 from django.contrib import messages
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 
 from Hello.models import Log, Annotation, User, Dictionary, Temp, Relation
 
@@ -17,8 +17,31 @@ def toAnnotation(request):
 
     return render(request, 'text_annotation.html', {'username': username, 'count': count})
 
+# 上传文件，并且将数据保存到数据库中
+def upload(request):
+    if request.method == 'POST':
+        # 获取文件名
+        file = request.FILES.get('file')
+        if file:
+            # 获取当前用户的id
+            username = request.session.get('username')
+            user = User.objects.get(username=username)
+            user_id = user.user_id
+            # 读取文件内容，并且插入到数据库中
+            with open(file.name, "r", encoding="utf-8") as lines:
+                data = lines.readlines()
+                for i in data:
+                    i = i.strip('\n')
+                    q = Annotation(content=i, file_name=file, flag=False, user_id_id=user_id)  # 将数据插入到数据库中
+                    q.save()
+            messages.success(request, "上传成功！")
+            return redirect('/toAnnotation/')
+        else:
+            messages.success(request, "文件为空！")
+            return redirect('/toAnnotation/')
 
-result= []
+
+result = []
 
 # 展示待标注文本信息
 def display_text(request):
@@ -346,7 +369,7 @@ def deleteDictionary(request):
 
 def modifyDictionary(request):
     entity = request.POST.get('entity1')
-    entity_type=request.POST.get('entity_type1')
+    entity_type = request.POST.get('entity_type1')
 
     dictionary = Dictionary.objects.get(entity=entity)
     print(dictionary.entity_type)

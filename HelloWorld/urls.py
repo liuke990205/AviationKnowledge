@@ -19,7 +19,15 @@ urlpatterns = [
     #跳转到D2rq界面
     path('toD2rq/', d2rq_view.toD2rq),
 
+    #选择数据库管理系统名
+    path('commitDatabase/', d2rq_view.commitDatabase),
+    #提交数据库连接配置
+    path('commitConfiguration/', d2rq_view.commitConfiguration),
 
+    #获取选中的表名
+    path('getTable/', d2rq_view.getTable),
+    ##从关系数据库中抽取知识
+    path('d2neo4j/', d2rq_view.d2neo4j),
 
     #将一条数据插入到neo4j数据库
     path('importNeo4j/', dataManager_view.importNeo4j, name='importNeo4j'),
@@ -29,18 +37,16 @@ urlpatterns = [
     path('deleteNeo4j/', dataManager_view.deleteNeo4j, name='deleteNeo4j'),
     #删除所有
     path('deleteAllNeo4j/', dataManager_view.deleteAllNeo4j, name='deleteAllNeo4j'),
-    #获取选中的表名
-    path('getTable/', d2rq_view.getTable),
-    ##从关系数据库中抽取知识
-    path('d2neo4j/', d2rq_view.d2neo4j),
 
-    #文本标注文件上传
-    path('upload/', dataManager_view.upload),
+
+
     #导出Neo4j数据库
     path('download/', dataManager_view.download),
 
     # 跳转到标注页面
     path('toAnnotation/', annotation_view.toAnnotation),
+    #文本标注文件上传
+    path('upload/', annotation_view.upload),
     # 显示待标注文本信息
     path('display_text/', annotation_view.display_text),
     # 自动标注

@@ -31,6 +31,7 @@ def relation_search(request):
         relation = request.POST['relation_text']
         entity2 = request.POST['entity2_text']
 
+        #将信息存储在session里面
         request.session['entity1'] = entity1
         request.session['relation'] = relation
         request.session['entity2'] = entity2
