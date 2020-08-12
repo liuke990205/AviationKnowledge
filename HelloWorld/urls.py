@@ -69,6 +69,10 @@ urlpatterns = [
     #跳转到实体识别页面
     path('toEntityRecognition/', entity_view.toEntityRecognition),
 
+    path('upload2/', entity_view.upload2),
+
+    path('display_result/', entity_view.display_result),
+
     #跳转到实体查询页面
     path('toEntitySearch/', entity_view.toEntitySearch),
     #进行实体查询操作

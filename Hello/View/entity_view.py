@@ -1,5 +1,6 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from Hello.toolkit.pre_load import neo4jconn
+from django.contrib import messages
 
 import json
 
@@ -23,6 +24,39 @@ def toEntityRecognition(request):
 def toEntitySearch(request):
     return render(request, 'entity_search.html')
 
+#上传待实体识别文档
+def upload2(request):
+    if request.method == 'POST':
+        # 获取文件名
+        file = request.FILES.get('file')
+        if file:
+            new_data = []
+            # 读取文件内容，并且插入到数据库中
+            with open(file.name, "r", encoding="utf-8") as lines:
+                dataList = lines.readlines()
+                print(dataList)
+                for data in dataList:
+                    data = data.strip('\n')
+                    new_data.append(data)
+            messages.success(request, "上传成功！")
+
+            request.session['new_data'] = new_data
+
+            return render(request, 'entity_recognition.html', {'new_data': new_data})
+        else:
+            messages.success(request, "文件为空！")
+            return redirect('/toEntityRecognition/')
+
+
+def display_result(request):
+    new_data = request.session.get('new_data')
+
+    resultList = [[1, 'X型飞机', '航空器'], [2, 'IO868-P-100', '参考文档'], [3, 'IO868-P-100', '参考文档'], [4, 'IO868-P-100', '参考文档'], [5, 'IO868-P-100', '参考文档']]
+
+    return render(request, 'entity_recognition.html', {'resultList': resultList, 'new_data':new_data})
+
+
+
 #实体查询
 def entity_search(request):
     if request.method == 'POST':
@@ -35,6 +69,8 @@ def entity_search(request):
         searchResult = {}
         searchResult=db.getEntityRelationbyEntity(entity1)
         tableData = Screen(searchResult)
+
+        print(tableData)
         if (len(searchResult) > 0):
             return render(request, 'entity_search.html',
                           {'searchResult': json.dumps(searchResult, ensure_ascii=False), 'tableData': tableData, 'entity1': entity1})

@@ -17,6 +17,7 @@ def toAnnotation(request):
 
     return render(request, 'text_annotation.html', {'username': username, 'count': count})
 
+
 # 上传文件，并且将数据保存到数据库中
 def upload(request):
     if request.method == 'POST':
@@ -43,6 +44,7 @@ def upload(request):
 
 result = []
 
+
 # 展示待标注文本信息
 def display_text(request):
     ctx = {}
@@ -56,7 +58,7 @@ def display_text(request):
         log = Log.objects.get(user_id=user_id)
         annotation_id = log.annotation_id
 
-        #获取当前用户的未标注信息
+        # 获取当前用户的未标注信息
         annotation_list = Annotation.objects.filter(user_id_id=user_id, flag=0)
         count = len(annotation_list)
 
@@ -105,7 +107,6 @@ def display_text(request):
 # 自动标注
 def text_annotation(request):
     if request.method == 'POST':
-
         # 获取当前用户的ID
         username = request.session.get('username')
         user = User.objects.get(username=username)
@@ -116,7 +117,7 @@ def text_annotation(request):
         annotation_id = log.annotation_id
         text_current = Annotation.objects.get(annotation_id=annotation_id)
 
-        #获取未标注数据的数量
+        # 获取未标注数据的数量
         count = len(Annotation.objects.filter(user_id=user_id, flag=0))
 
         # 获取当前标注信息的文档名称
@@ -165,7 +166,10 @@ def text_annotation(request):
 
         # 根据annotation_id查询自动识别的数据集合
         resultList = Temp.objects.filter(annotation_id_id=text_current.annotation_id)
-        return render(request, 'text_annotation.html', {'resultList': resultList, 'current_text': text_current.content, 'entityList': entityList, 'count': count})
+        print(resultList)
+        return render(request, 'text_annotation.html',
+                      {'resultList': resultList, 'current_text': text_current.content, 'entityList': entityList,
+                       'count': count})
 
 
 # 增加一条标注信息
@@ -209,7 +213,8 @@ def addTemp(request):
     resultList = Temp.objects.filter(annotation_id_id=annotation_id)
 
     return render(request, 'text_annotation.html',
-                  {'resultList': resultList, 'current_text': current_text.content, 'entityList': entityList, 'count': count})
+                  {'resultList': resultList, 'current_text': current_text.content, 'entityList': entityList,
+                   'count': count})
 
 
 # 删除选中的Temp一条信息
@@ -247,7 +252,8 @@ def deleteTemp(request):
         if current_text.content.find(entity.entity) != -1:
             entityList[entity.entity] = entity.entity_type
     return render(request, 'text_annotation.html',
-                  {'resultList': resultList, 'current_text': current_text.content, 'entityList': entityList, 'count': count})
+                  {'resultList': resultList, 'current_text': current_text.content, 'entityList': entityList,
+                   'count': count})
 
 
 # 修改Temp信息
@@ -296,9 +302,11 @@ def modifyTemp(request):
             entityList[entity.entity] = entity.entity_type
 
     return render(request, 'text_annotation.html',
-                  {'resultList': resultList, 'current_text': current_text.content, 'entityList': entityList, 'count': count})
+                  {'resultList': resultList, 'current_text': current_text.content, 'entityList': entityList,
+                   'count': count})
 
-#增加一条词典信息
+
+# 增加一条词典信息
 def addDictionary(request):
     if request.method == 'POST':
         entity = request.POST.get('entity')
@@ -331,45 +339,13 @@ def addDictionary(request):
             if current_text.content.find(entity.entity) != -1:
                 entityList[entity.entity] = entity.entity_type
 
-        return render(request, 'text_annotation.html', {'current_text': current_text.content, 'entityList': entityList, 'count': count})
+        return render(request, 'text_annotation.html',
+                      {'current_text': current_text.content, 'entityList': entityList, 'count': count})
+
 
 def deleteDictionary(request):
     entity = request.GET.get('entity')
     print(entity)
-
-    dictionary =Dictionary.objects.get(entity=entity)
-    print(dictionary.entity_type)
-    dictionary.delete()
-
-    # 获取当前用户的ID
-    username = request.session.get('username')
-    user = User.objects.get(username=username)
-    user_id = user.user_id
-
-    # 获取未标注数据的数量
-    count = len(Annotation.objects.filter(user_id=user_id, flag=0))
-
-    # 获取用户的annotation的ID
-    log = Log.objects.get(user_id=user_id)
-    annotation_id = log.annotation_id
-
-    # 获取当前文本信息
-    current_text = Annotation.objects.get(annotation_id=annotation_id)
-
-    # 获取字典的全部信息
-    dictionary_entity = Dictionary.objects.all()
-
-    entityList = {}
-    # 获取当前文本的头实体和尾实体
-    for entity in dictionary_entity:
-        if current_text.content.find(entity.entity) != -1:
-            entityList[entity.entity] = entity.entity_type
-
-    return render(request, 'text_annotation.html', {'current_text': current_text.content, 'entityList': entityList, 'count': count})
-
-def modifyDictionary(request):
-    entity = request.POST.get('entity1')
-    entity_type = request.POST.get('entity_type1')
 
     dictionary = Dictionary.objects.get(entity=entity)
     print(dictionary.entity_type)
@@ -399,4 +375,39 @@ def modifyDictionary(request):
         if current_text.content.find(entity.entity) != -1:
             entityList[entity.entity] = entity.entity_type
 
-    return render(request, 'text_annotation.html', {'current_text': current_text.content, 'entityList': entityList, 'count': count})
+    return render(request, 'text_annotation.html',
+                  {'current_text': current_text.content, 'entityList': entityList, 'count': count})
+
+
+def modifyDictionary(request):
+    entity = request.POST.get('entity1')
+    entity_type = request.POST.get('entity_type1')
+
+    dictionary = Dictionary.objects.get(entity=entity)
+    print(dictionary.entity_type)
+    dictionary.delete()
+
+    # 获取当前用户的ID
+    username = request.session.get('username')
+    user = User.objects.get(username=username)
+    user_id = user.user_id
+
+    # 获取未标注数据的数量
+    count = len(Annotation.objects.filter(user_id=user_id, flag=0))
+    # 获取用户的annotation的ID
+    log = Log.objects.get(user_id=user_id)
+    annotation_id = log.annotation_id
+    # 获取当前文本信息
+    current_text = Annotation.objects.get(annotation_id=annotation_id)
+
+    # 获取字典的全部信息
+    dictionary_entity = Dictionary.objects.all()
+
+    entityList = {}
+    # 获取当前文本的头实体和尾实体
+    for entity in dictionary_entity:
+        if current_text.content.find(entity.entity) != -1:
+            entityList[entity.entity] = entity.entity_type
+
+    return render(request, 'text_annotation.html',
+                  {'current_text': current_text.content, 'entityList': entityList, 'count': count})

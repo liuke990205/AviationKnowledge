@@ -237,7 +237,6 @@ def insertKnow(table2, entity_name2, re_name, database, host, username, password
     count = cursor.execute(sql)
     for i in range(count):
         result = cursor.fetchone()
-        print(result, 888)
         # 获取到头实体和尾实体的类型
         headEntityType = Dictionary.objects.get(entity=result[0]).entity_type
         tailEntityType = Dictionary.objects.get(entity=result[1]).entity_type
