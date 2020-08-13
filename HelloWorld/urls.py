@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.urls import path
 
-from Hello.View import views, annotation_view, answer_view, dataManager_view, entity_view, relation_view, home_view, d2rq_view
+from Hello.View import views, annotation_view, answer_view, dataManager_view, entity_view, relation_view, home_view, d2rq_view, relation_extraction_view
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -69,21 +69,28 @@ urlpatterns = [
     #跳转到实体识别页面
     path('toEntityRecognition/', entity_view.toEntityRecognition),
 
-    path('upload2/', entity_view.upload2),
 
-    path('display_result/', entity_view.display_result),
+    #path('ner/', entity_view.ner),
+    #上传带实体识别文件
+    #path('upload2/', entity_view.upload2),
+    #展示结果集
+    #path('display_result/', entity_view.display_result),
 
-    #跳转到实体查询页面
-    path('toEntitySearch/', entity_view.toEntitySearch),
-    #进行实体查询操作
-    path('entity_search/', entity_view.entity_search),
-    #进行实体修改操作
-    path('entity_modify/', entity_view.entity_modify),
-    #进行实体删除操作
-    path('entity_delete/', entity_view.entity_delete, name='entity_delete'),
+
 
     #跳转到关系抽取页面
-    path('toRelationeExtract/', relation_view.toRelationeExtract),
+    path('toRelation/', relation_extraction_view.toRelation),
+    #上传待抽取文件
+    path('upload3/', relation_extraction_view.upload3),
+
+    #进行关系抽取操作
+    path('re_text/', relation_extraction_view.re_text),
+    #进行关系删除操作
+    path('deleteRel/', relation_extraction_view.deleteRel, name='deleteRel'),
+    #进行关系修改操作
+    path('modifyRel/', relation_extraction_view.modifyRel),
+    #进行保存操作
+    path('saveRel/', relation_extraction_view.saveRel),
 
     #跳转到关系查询界面
     path('toRelationSearch/', relation_view.toRelationSearch),

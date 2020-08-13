@@ -32,8 +32,7 @@ class Temp(models.Model):
 
     relationshipCategory = models.CharField(max_length=100)
     annotation_id = models.ForeignKey('Annotation', on_delete=models.CASCADE)
-    user_id = models.IntegerField()
-    filename = models.CharField(max_length=100)
+
 
 class Dictionary(models.Model):
     dictionary_id = models.AutoField(primary_key=True)
@@ -47,16 +46,6 @@ class Relation(models.Model):
     tail_entity = models.CharField(max_length=100)
     relation = models.CharField(max_length=100)
 
-class Aircraft(models.Model):
-    aircraft_id = models.AutoField(primary_key=True)
-    aircraft_name = models.CharField(max_length=100)
-    description = models.CharField(max_length=200)
-
-class Model(models.Model):
-    model_id = models.AutoField(primary_key=True)
-    model_name = models.CharField(max_length=100)
-    description = models.CharField(max_length=200)
-
 
 class Rel(models.Model):
     rel_id = models.AutoField(primary_key=True)
@@ -66,4 +55,4 @@ class Rel(models.Model):
     tailEntityType = models.CharField(max_length=100)
     relationshipCategory = models.CharField(max_length=100)
     text = models.CharField(max_length=255)
-    re_flag = models.IntegerField()
+
