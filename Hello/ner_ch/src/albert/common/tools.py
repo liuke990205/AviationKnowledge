@@ -1,15 +1,18 @@
-import os
-import random
-import torch
-import numpy as np
 import json
+import logging
+import os
 import pickle
-import torch.nn as nn
+import random
 from collections import OrderedDict
 from pathlib import Path
-import logging
+
+import numpy as np
+import torch
+import torch.nn as nn
 
 logger = logging.getLogger()
+
+
 def print_config(config):
     info = "Running with the following configs:\n"
     for k, v in config.items():
@@ -17,13 +20,14 @@ def print_config(config):
     print("\n" + info + "\n")
     return
 
+
 def init_logger(log_file=None, log_file_level=logging.NOTSET):
     '''
     Example:
         >>> init_logger(log_file)
         >>> logger.info("abc'")
     '''
-    if isinstance(log_file,Path):
+    if isinstance(log_file, Path):
         log_file = str(log_file)
     # log_format = logging.Formatter("[%(asctime)s %(levelname)s] %(message)s")
     log_format = logging.Formatter("%(message)s")
@@ -38,6 +42,7 @@ def init_logger(log_file=None, log_file_level=logging.NOTSET):
         file_handler.setFormatter(log_format)
         logger.addHandler(file_handler)
     return logger
+
 
 def seed_everything(seed=1029):
     '''
@@ -119,7 +124,7 @@ def restore_checkpoint(resume_path, model=None):
         model.module.load_state_dict(states)
     else:
         model.load_state_dict(states)
-    return [model,best,start_epoch]
+    return [model, best, start_epoch]
 
 
 def save_pickle(data, file_path):
@@ -177,6 +182,7 @@ def load_json(file_path):
         data = json.load(f)
     return data
 
+
 def save_model(model, model_path):
     """ 存储不含有显卡信息的state_dict或model
     :param model:
@@ -192,6 +198,7 @@ def save_model(model, model_path):
     for key in state_dict:
         state_dict[key] = state_dict[key].cpu()
     torch.save(state_dict, model_path)
+
 
 def load_model(model, model_path):
     '''

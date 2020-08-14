@@ -1,28 +1,25 @@
-from django.shortcuts import render
 import csv
-from django.shortcuts import render, redirect
+
 from django.contrib import messages
+from django.shortcuts import render, redirect
 
-import json
-import os
 # Create your views here.
-from django.http import HttpResponse
-import operator
 from Hello.ner_ch.src.lstm_crf.main import NER
-
 
 
 def toEntityRecognition(request):
     return render(request, 'entity_recognition.html')
 
 
-def convert(dict,sentence):
+def convert(dict, sentence):
     lables = {'AIR': '航空器', 'WEA': '武器', 'MATH': '数学模型', 'SYS': '系统', 'TAR': '性能指标', 'DOC': '参考文档'}
     list = []
     s = 0
     end = len(sentence)
+
     def function(date):
         return date['start']
+
     dict.sort(key=function)
     for t in dict:
         start = t['start']
@@ -40,6 +37,7 @@ def convert(dict,sentence):
         list.append(data)
     return list
 
+
 def save(list):
     lables = {'AIR': '航空器', 'WEA': '武器', 'MATH': '数学模型', 'SYS': '系统', 'TAR': '性能指标', 'DOC': '参考文档'}
     dict = {}
@@ -55,9 +53,9 @@ def save(list):
         type = lables[t['type']]
         if word not in dict.keys():
             dict[word] = type
-            temp = [n+1,word,type]
+            temp = [n + 1, word, type]
             add.append(temp)
-            n = n+1
+            n = n + 1
     with open(dicfile, "a+", newline='') as file:
         csv_file = csv.writer(file)
         csv_file.writerows(add)
@@ -75,6 +73,7 @@ def ner(request):
             save(temp)
     request.session['doc'] = list
     return redirect('/display_result/')
+
 
 def upload2(request):
     if request.method == 'POST':
@@ -104,10 +103,11 @@ def upload2(request):
             messages.success(request, "文件为空！")
             return redirect('/ner/')
 
+
 def display_result(request):
     doc = request.session.get('doc')
     resultList = []
     for li in doc:
         if (li['type'] != 'none') & (li['type'] != 'enter'):
             resultList.append(li)
-    return render(request, 'entity_recognition.html', {'doc': doc,'resultList':resultList})
+    return render(request, 'entity_recognition.html', {'doc': doc, 'resultList': resultList})

@@ -1,16 +1,17 @@
 # -*- coding:utf-8 -*-
 
 import numpy as np
-
 import torch
+from sklearn.metrics import f1_score, classification_report
 from torch import nn
 
-from model.modeling_albert import BertConfig, BertModel
 from configs.base import config
 from lstm_crf.crf import CRF
-from sklearn.metrics import f1_score, classification_report
+from model.modeling_albert import BertConfig, BertModel
 
 DEVICE = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+
+
 # import torchsnooper
 
 def log_sum_exp(vec):
@@ -78,7 +79,7 @@ class BiLSTMCRF(nn.Module):
         output = self.hidden2tag(lstm_out)
         return output
 
-    def loss_fn(self, bert_encode, output_mask, tags): #bert_encode是bert的输出
+    def loss_fn(self, bert_encode, output_mask, tags):  # bert_encode是bert的输出
         loss = self.crf.negative_log_loss(bert_encode, output_mask, tags)
         return loss
 

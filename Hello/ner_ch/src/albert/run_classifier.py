@@ -1,18 +1,21 @@
 from __future__ import absolute_import, division, print_function
+
 import argparse
+
 import torch
-from torch.utils.data import (DataLoader, RandomSampler, SequentialSampler, TensorDataset)
-from model.file_utils import WEIGHTS_NAME, CONFIG_NAME
-from model.modeling_albert import BertConfig
-from model.optimization import AdamW, WarmupLinearSchedule
-from common.tools import seed_everything
-from common.tools import logger, init_logger
-from configs.base import config
-from model.modeling_albert import BertForSequenceClassification
+from torch.utils.data import (DataLoader, RandomSampler, SequentialSampler)
+
 from callback.progressbar import ProgressBar
-from lcqmc_progressor import BertProcessor
 from common.metrics import Accuracy
 from common.tools import AverageMeter
+from common.tools import logger, init_logger
+from common.tools import seed_everything
+from configs.base import config
+from lcqmc_progressor import BertProcessor
+from model.file_utils import WEIGHTS_NAME, CONFIG_NAME
+from model.modeling_albert import BertConfig
+from model.modeling_albert import BertForSequenceClassification
+from model.optimization import AdamW, WarmupLinearSchedule
 
 
 def train(args, train_dataloader, eval_dataloader, metrics, model):

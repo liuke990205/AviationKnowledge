@@ -16,12 +16,13 @@
 from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
 
+import copy
+import json
 import logging
 import os
-import json
-import six
-import copy
 from io import open
+
+import six
 
 from .file_utils import cached_path
 
@@ -30,6 +31,7 @@ logger = logging.getLogger(__name__)
 SPECIAL_TOKENS_MAP_FILE = 'special_tokens_map.json'
 ADDED_TOKENS_FILE = 'added_tokens.json'
 TOKENIZER_CONFIG_FILE = 'tokenizer_config.json'
+
 
 class PreTrainedTokenizer(object):
     """ Base class for all tokenizers.
@@ -222,11 +224,11 @@ class PreTrainedTokenizer(object):
         for key, value in kwargs.items():
             if key in self.SPECIAL_TOKENS_ATTRIBUTES:
                 if key == 'additional_special_tokens':
-                    assert isinstance(value, (list, tuple)) and all(isinstance(t, str) or (six.PY2 and isinstance(t, unicode)) for t in value)
+                    assert isinstance(value, (list, tuple)) and all(
+                        isinstance(t, str) or (six.PY2 and isinstance(t, unicode)) for t in value)
                 else:
                     assert isinstance(value, str) or (six.PY2 and isinstance(value, unicode))
                 setattr(self, key, value)
-
 
     @classmethod
     def from_pretrained(cls, *inputs, **kwargs):
@@ -275,7 +277,6 @@ class PreTrainedTokenizer(object):
 
         """
         return cls._from_pretrained(*inputs, **kwargs)
-
 
     @classmethod
     def _from_pretrained(cls, pretrained_model_name_or_path, *init_inputs, **kwargs):
@@ -347,7 +348,8 @@ class PreTrainedTokenizer(object):
                 if file_path is None:
                     resolved_vocab_files[file_id] = None
                 else:
-                    resolved_vocab_files[file_id] = cached_path(file_path, cache_dir=cache_dir, force_download=force_download, proxies=proxies)
+                    resolved_vocab_files[file_id] = cached_path(file_path, cache_dir=cache_dir,
+                                                                force_download=force_download, proxies=proxies)
         except EnvironmentError as e:
             if pretrained_model_name_or_path in s3_models:
                 logger.error("Couldn't reach server to download vocabulary.")
@@ -411,12 +413,11 @@ class PreTrainedTokenizer(object):
         # Add supplementary tokens.
         if added_tokens_file is not None:
             added_tok_encoder = json.load(open(added_tokens_file, encoding="utf-8"))
-            added_tok_decoder = {v:k for k, v in added_tok_encoder.items()}
+            added_tok_decoder = {v: k for k, v in added_tok_encoder.items()}
             tokenizer.added_tokens_encoder.update(added_tok_encoder)
             tokenizer.added_tokens_decoder.update(added_tok_decoder)
 
         return tokenizer
-
 
     def save_pretrained(self, save_directory):
         """ Save the tokenizer vocabulary files together with:
@@ -459,7 +460,6 @@ class PreTrainedTokenizer(object):
 
         return vocab_files + (special_tokens_map_file, added_tokens_file)
 
-
     def save_vocabulary(self, save_directory):
         """ Save the tokenizer vocabulary to a directory. This method does *NOT* save added tokens
             and special token mappings.
@@ -468,16 +468,13 @@ class PreTrainedTokenizer(object):
         """
         raise NotImplementedError
 
-
     def vocab_size(self):
         """ Size of the base vocabulary (without the added tokens) """
         raise NotImplementedError
 
-
     def __len__(self):
         """ Size of the full vocabulary with the added tokens """
         return self.vocab_size + len(self.added_tokens_encoder)
-
 
     def add_tokens(self, new_tokens):
         """
@@ -512,12 +509,11 @@ class PreTrainedTokenizer(object):
                 logger.info("Adding %s to the vocabulary", token)
 
         added_tok_encoder = dict((tok, len(self) + i) for i, tok in enumerate(to_add_tokens))
-        added_tok_decoder = {v:k for k, v in added_tok_encoder.items()}
+        added_tok_decoder = {v: k for k, v in added_tok_encoder.items()}
         self.added_tokens_encoder.update(added_tok_encoder)
         self.added_tokens_decoder.update(added_tok_decoder)
 
         return len(to_add_tokens)
-
 
     def add_special_tokens(self, special_tokens_dict):
         """
@@ -563,7 +559,8 @@ class PreTrainedTokenizer(object):
         for key, value in special_tokens_dict.items():
             assert key in self.SPECIAL_TOKENS_ATTRIBUTES
             if key == 'additional_special_tokens':
-                assert isinstance(value, (list, tuple)) and all(isinstance(t, str) or (six.PY2 and isinstance(t, unicode)) for t in value)
+                assert isinstance(value, (list, tuple)) and all(
+                    isinstance(t, str) or (six.PY2 and isinstance(t, unicode)) for t in value)
                 added_tokens += self.add_tokens(value)
             else:
                 assert isinstance(value, str) or (six.PY2 and isinstance(value, unicode))
@@ -580,6 +577,7 @@ class PreTrainedTokenizer(object):
 
             Take care of added tokens.
         """
+
         def split_on_token(tok, text):
             result = []
             split_text = text.split(tok)
@@ -617,8 +615,8 @@ class PreTrainedTokenizer(object):
                 text_list = tokenized_text
 
             return sum((self._tokenize(token, **kwargs) if token not \
-                    in self.added_tokens_encoder and token not in self.all_special_tokens \
-                    else [token] for token in tokenized_text), [])
+                                                           in self.added_tokens_encoder and token not in self.all_special_tokens \
+                            else [token] for token in tokenized_text), [])
 
         added_tokens = list(self.added_tokens_encoder.keys()) + self.all_special_tokens
         tokenized_text = split_on_tokens(added_tokens, text)
@@ -677,7 +675,8 @@ class PreTrainedTokenizer(object):
         """
         if text_pair is None:
             if add_special_tokens:
-                return self.add_special_tokens_single_sentence(self.convert_tokens_to_ids(self.tokenize(text, **kwargs)))
+                return self.add_special_tokens_single_sentence(
+                    self.convert_tokens_to_ids(self.tokenize(text, **kwargs)))
             else:
                 return self.convert_tokens_to_ids(self.tokenize(text, **kwargs))
 
@@ -690,7 +689,8 @@ class PreTrainedTokenizer(object):
             return first_sentence_tokens, second_sentence_tokens
 
     def add_special_tokens_single_sentence(self, token_ids):
-        logger.warning("This tokenizer does not make use of special tokens. The sequence has been returned with no modification.")
+        logger.warning(
+            "This tokenizer does not make use of special tokens. The sequence has been returned with no modification.")
         return token_ids
 
     def add_special_tokens_sentences_pair(self, token_ids_0, token_ids_1):
@@ -809,6 +809,9 @@ class PreTrainedTokenizer(object):
         """ Clean up a list of simple English tokenization artifacts like spaces before punctuations and abreviated forms.
         """
         out_string = out_string.replace(' .', '.').replace(' ?', '?').replace(' !', '!').replace(' ,', ','
-                        ).replace(" ' ", "'").replace(" n't", "n't").replace(" 'm", "'m").replace(" do not", " don't"
-                        ).replace(" 's", "'s").replace(" 've", "'ve").replace(" 're", "'re")
+                                                                                                 ).replace(" ' ",
+                                                                                                           "'").replace(
+            " n't", "n't").replace(" 'm", "'m").replace(" do not", " don't"
+                                                        ).replace(" 's", "'s").replace(" 've", "'ve").replace(" 're",
+                                                                                                              "'re")
         return out_string

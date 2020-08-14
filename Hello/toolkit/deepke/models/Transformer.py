@@ -1,8 +1,9 @@
 import torch.nn as nn
-from . import BasicModule
 from module import Embedding
 from module import Transformer as TransformerBlock
 from utils import seq_len_to_mask
+
+from . import BasicModule
 
 
 class Transformer(BasicModule):

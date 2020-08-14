@@ -1,6 +1,7 @@
-import torch
-import numpy as np
 from abc import ABCMeta, abstractmethod
+
+import numpy as np
+import torch
 from sklearn.metrics import precision_recall_fscore_support
 
 

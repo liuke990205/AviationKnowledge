@@ -1,11 +1,11 @@
 # -*- coding:utf-8 -*-
 
 import torch
-from torch.utils.data import TensorDataset, DataLoader, RandomSampler
+from torch.utils.data import TensorDataset, DataLoader
+
 from configs.base import config
 from model.tokenization_bert import BertTokenizer
 
-import os
 
 class InputFeatures(object):
     def __init__(self, input_id, label_id, input_mask, output_mask):
@@ -13,6 +13,7 @@ class InputFeatures(object):
         self.label_id = label_id
         self.input_mask = input_mask
         self.output_mask = output_mask
+
 
 class DataFormat():
     def __init__(self, max_length=100, batch_size=20, data_type='train'):
@@ -35,7 +36,7 @@ class DataFormat():
                         'B_DOC': 10,
                         'I_DOC': 11,
                         'O': 12}
-        #base_path = os.path.abspath(os.path.join(os.getcwd(), "../.."))
+        # base_path = os.path.abspath(os.path.join(os.getcwd(), "../.."))
         base_path = 'Hello/ner_ch'
         if data_type == "train":
             self.data_path = base_path + '/data/ner_data/train/'
@@ -45,7 +46,7 @@ class DataFormat():
             self.data_path = base_path + "/data/ner_data/test/"
 
         self.read_corpus(self.data_path + 'source.txt', self.data_path + 'target.txt', self.max_length, self.tag_map)
-        self.train_dataloader= self.prepare_batch(self.train_data, self.batch_size)
+        self.train_dataloader = self.prepare_batch(self.train_data, self.batch_size)
 
     def read_corpus(self, train_file_data, train_file_tag, max_length, label_dic):
         """
@@ -123,5 +124,3 @@ class DataFormat():
             return DataLoader(train_dataset, shuffle=True, batch_size=batch_size)
         elif self.data_type == 'dev':
             return DataLoader(train_dataset, shuffle=False, batch_size=batch_size)
-
-

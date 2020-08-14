@@ -4,13 +4,16 @@ from django.shortcuts import render
 
 from Hello.toolkit.pre_load import neo4jconn
 
+
 # 跳转到关系抽取页面
 def toRelationeExtract(request):
     return render(request, 'relation_extract.html')
 
+
 # 跳转到关系查询页面
 def toRelationSearch(request):
     return render(request, 'relation_search.html')
+
 
 def Screen(searchResult):
     tableData = []
@@ -24,6 +27,7 @@ def Screen(searchResult):
     print(tableData)
     return tableData
 
+
 def relation_search(request):
     ctx = {}
     if request.method == 'POST':
@@ -31,11 +35,10 @@ def relation_search(request):
         relation = request.POST['relation_text']
         entity2 = request.POST['entity2_text']
 
-        #将信息存储在session里面
+        # 将信息存储在session里面
         request.session['entity1'] = entity1
         request.session['relation'] = relation
         request.session['entity2'] = entity2
-
 
         db = neo4jconn
 

@@ -1,10 +1,12 @@
+import functools
+import itertools as it
 import operator
 from copy import copy
-import functools
 from math import sqrt
-from torch.optim.optimizer import Optimizer
-import itertools as it
+
 from torch.nn.utils import clip_grad_norm_
+from torch.optim.optimizer import Optimizer
+
 from .utils import *
 
 __call__ = ['SGDW',
@@ -23,6 +25,7 @@ __call__ = ['SGDW',
             'Ranger',
             'BertAdam'
             ]
+
 
 class SGDW(Optimizer):
     r"""Implements stochastic gradient descent (optionally with momentum) with
@@ -47,6 +50,7 @@ class SGDW(Optimizer):
         >>> model = LSTM()
         >>> optimizer = SGDW(model.parameters(), lr=0.1, momentum=0.9,weight_decay=1e-5)
     """
+
     def __init__(self, params, lr=0.1, momentum=0, dampening=0,
                  weight_decay=0, nesterov=False):
         if lr < 0.0:
@@ -132,8 +136,8 @@ class AdamW(Optimizer):
             raise ValueError("Invalid beta parameter at index 0: {}".format(betas[0]))
         if not 0.0 <= betas[1] < 1.0:
             raise ValueError("Invalid beta parameter at index 1: {}".format(betas[1]))
-        defaults = dict(lr=lr, betas=betas, eps=eps,weight_decay=weight_decay, amsgrad=amsgrad)
-        #super(AdamW, self).__init__(params, defaults)
+        defaults = dict(lr=lr, betas=betas, eps=eps, weight_decay=weight_decay, amsgrad=amsgrad)
+        # super(AdamW, self).__init__(params, defaults)
         super().__init__(params, defaults)
 
     def step(self, closure=None):
@@ -193,6 +197,7 @@ class AdamW(Optimizer):
                 else:
                     p.data.addcdiv_(-step_size, exp_avg, denom)
         return loss
+
 
 class AdaBound(Optimizer):
     """Implements AdaBound algorithm.
@@ -302,6 +307,7 @@ class AdaBound(Optimizer):
                 p.data.add_(-step_size)
         return loss
 
+
 class Nadam(Optimizer):
     """Implements Nadam algorithm (a variant of Adam based on Nesterov momentum).
 
@@ -372,9 +378,9 @@ class Nadam(Optimizer):
                     grad = grad.add(group['weight_decay'], p.data)
 
                 momentum_cache_t = beta1 * \
-                    (1. - 0.5 * (0.96 ** (t * schedule_decay)))
+                                   (1. - 0.5 * (0.96 ** (t * schedule_decay)))
                 momentum_cache_t_1 = beta1 * \
-                    (1. - 0.5 * (0.96 ** ((t + 1) * schedule_decay)))
+                                     (1. - 0.5 * (0.96 ** ((t + 1) * schedule_decay)))
                 m_schedule_new = m_schedule * momentum_cache_t
                 m_schedule_next = m_schedule * momentum_cache_t * momentum_cache_t_1
                 state['m_schedule'] = m_schedule_new
@@ -390,6 +396,7 @@ class Nadam(Optimizer):
 
         return loss
 
+
 class AdaFactor(Optimizer):
     '''
     # Code below is an implementation of https://arxiv.org/pdf/1804.04235.pdf
@@ -398,6 +405,7 @@ class AdaFactor(Optimizer):
         >>> model = LSTM()
         >>> optimizer = AdaFactor(model.parameters(),lr= lr)
     '''
+
     def __init__(self, params, lr=None, beta1=0.9, beta2=0.999, eps1=1e-30,
                  eps2=1e-3, cliping_threshold=1, non_constant_decay=True,
                  enable_factorization=True, ams_grad=True, weight_decay=0):
@@ -421,13 +429,13 @@ class AdaFactor(Optimizer):
     def _experimental_reshape(self, shape):
         temp_shape = shape[2:]
         if len(temp_shape) == 1:
-            new_shape = (shape[0], shape[1]*shape[2])
+            new_shape = (shape[0], shape[1] * shape[2])
         else:
             tmp_div = len(temp_shape) // 2 + len(temp_shape) % 2
-            new_shape = (shape[0]*functools.reduce(operator.mul,
-                                                   temp_shape[tmp_div:], 1),
-                         shape[1]*functools.reduce(operator.mul,
-                                                   temp_shape[:tmp_div], 1))
+            new_shape = (shape[0] * functools.reduce(operator.mul,
+                                                     temp_shape[tmp_div:], 1),
+                         shape[1] * functools.reduce(operator.mul,
+                                                     temp_shape[:tmp_div], 1))
         return new_shape, copy(shape)
 
     def _check_shape(self, shape):
@@ -540,7 +548,7 @@ class AdaFactor(Optimizer):
                 else:
                     exp_avg_sq.mul_(beta2_t). \
                         addcmul_(1 - beta2_t, grad, grad). \
-                        add_((1 - beta2_t)*group['eps1'])
+                        add_((1 - beta2_t) * group['eps1'])
                     v = exp_avg_sq
                 g = grad
                 if group['enable_momentum']:
@@ -549,15 +557,16 @@ class AdaFactor(Optimizer):
                     torch.max(exp_avg_sq_hat, v, out=exp_avg_sq_hat)
                     v = exp_avg_sq_hat
                     u = torch.div(g, (torch.div(v, 1 - beta2_t **
-                                  state['step'])).sqrt().add_(group['eps1']))
+                                                state['step'])).sqrt().add_(group['eps1']))
                 else:
                     u = torch.div(g, v.sqrt())
                 u.div_(max(1, self._rms(u) / group['cliping_threshold']))
                 p.data.add_(-lr_t * (u.view(old_shape) if is_need_reshape and
-                            group['enable_factorization'] else u))
+                                                          group['enable_factorization'] else u))
                 if group['weight_decay'] != 0:
                     p.data.add_(-group['weight_decay'] * lr_t, p.data)
         return loss
+
 
 class WeightDecayOptimizerWrapper(Optimizer):
     '''
@@ -566,7 +575,8 @@ class WeightDecayOptimizerWrapper(Optimizer):
         >>> model = LSTM()
         >>> optimizer = WeightDecayOptimizerWrapper(Adam(model.parameters(),lr = 1e-3),weight_decay=0.05)
     '''
-    def __init__(self, optimizer, weight_decay, change_with_lr = True):
+
+    def __init__(self, optimizer, weight_decay, change_with_lr=True):
         self.optimizer = optimizer
         if isinstance(weight_decay, (list, tuple)):
             assert len(weight_decay) == len(self.optimizer.param_groups)
@@ -575,7 +585,7 @@ class WeightDecayOptimizerWrapper(Optimizer):
         else:
             assert weight_decay >= 0
             self.weight_decays = [weight_decay] * \
-                len(self.optimizer.param_groups)
+                                 len(self.optimizer.param_groups)
         self.state = self.optimizer.state
         self.change_with_lr = change_with_lr
 
@@ -612,9 +622,11 @@ class WeightDecayOptimizerWrapper(Optimizer):
     def __setstate__(self, state):
         self.optimizer.__setstate__(state)
         self.state = self.optimizer.state
+
     @property
     def param_groups(self):
         return self.optimizer.param_groups
+
 
 class NovoGrad(Optimizer):
     """Implements NovoGrad algorithm.
@@ -633,14 +645,14 @@ class NovoGrad(Optimizer):
     """
 
     def __init__(self, params, lr=0.01, betas=(0.95, 0.98), eps=1e-8,
-                 weight_decay=0,grad_averaging=False):
+                 weight_decay=0, grad_averaging=False):
         if lr < 0.0:
             raise ValueError("Invalid learning rate: {}".format(lr))
         if not 0.0 <= betas[0] < 1.0:
             raise ValueError("Invalid beta parameter at index 0: {}".format(betas[0]))
         if not 0.0 <= betas[1] < 1.0:
             raise ValueError("Invalid beta parameter at index 1: {}".format(betas[1]))
-        defaults = dict(lr=lr, betas=betas, eps=eps,weight_decay=weight_decay,grad_averaging = grad_averaging)
+        defaults = dict(lr=lr, betas=betas, eps=eps, weight_decay=weight_decay, grad_averaging=grad_averaging)
         super().__init__(params, defaults)
 
     def step(self, closure=None):
@@ -658,7 +670,7 @@ class NovoGrad(Optimizer):
                 g_2 = torch.sum(grad ** 2)
                 if len(state) == 0:
                     state['step'] = 0
-                    state['moments'] = grad.div(g_2.sqrt() +group['eps']) + \
+                    state['moments'] = grad.div(g_2.sqrt() + group['eps']) + \
                                        group['weight_decay'] * p.data
                     state['grads_ema'] = g_2
                 moments = state['moments']
@@ -678,7 +690,7 @@ class NovoGrad(Optimizer):
                 if group['grad_averaging']:
                     grad.mul_(1.0 - beta1)
 
-                moments.mul_(beta1).add_(grad) # velocity
+                moments.mul_(beta1).add_(grad)  # velocity
 
                 bias_correction1 = 1 - beta1 ** state['step']
                 bias_correction2 = 1 - beta2 ** state['step']
@@ -686,6 +698,7 @@ class NovoGrad(Optimizer):
                 p.data.add_(-step_size, moments)
 
         return loss
+
 
 #
 class Lamb(Optimizer):
@@ -767,7 +780,7 @@ class Lamb(Optimizer):
                 # bias_correction1 = 1 - beta1 ** state['step']
                 # bias_correction2 = 1 - beta2 ** state['step']
                 # Apply bias to lr to avoid broadcast.
-                step_size = group['lr'] # * math.sqrt(bias_correction2) / bias_correction1
+                step_size = group['lr']  # * math.sqrt(bias_correction2) / bias_correction1
 
                 weight_norm = p.data.pow(2).sum().sqrt().clamp(0, 10)
 
@@ -789,6 +802,7 @@ class Lamb(Optimizer):
                 p.data.add_(-step_size * trust_ratio, adam_step)
 
         return loss
+
 
 class Lars(Optimizer):
     r"""Implements the LARS optimizer from https://arxiv.org/pdf/1708.03888.pdf
@@ -879,6 +893,7 @@ class Lars(Optimizer):
 
         return loss
 
+
 #
 
 class RAdam(Optimizer):
@@ -948,7 +963,9 @@ class RAdam(Optimizer):
 
                     # more conservative since it's an approximated value
                     if N_sma >= 5:
-                        step_size = math.sqrt((1 - beta2_t) * (N_sma - 4) / (N_sma_max - 4) * (N_sma - 2) / N_sma * N_sma_max / (N_sma_max - 2)) / (1 - beta1 ** state['step'])
+                        step_size = math.sqrt(
+                            (1 - beta2_t) * (N_sma - 4) / (N_sma_max - 4) * (N_sma - 2) / N_sma * N_sma_max / (
+                                        N_sma_max - 2)) / (1 - beta1 ** state['step'])
                     else:
                         step_size = 1.0 / (1 - beta1 ** state['step'])
                     buffered[2] = step_size
@@ -966,6 +983,7 @@ class RAdam(Optimizer):
                 p.data.copy_(p_data_fp32)
 
         return loss
+
 
 class PlainRAdam(Optimizer):
 
@@ -1020,7 +1038,9 @@ class PlainRAdam(Optimizer):
 
                 # more conservative since it's an approximated value
                 if N_sma >= 5:
-                    step_size = group['lr'] * math.sqrt((1 - beta2_t) * (N_sma - 4) / (N_sma_max - 4) * (N_sma - 2) / N_sma * N_sma_max / (N_sma_max - 2)) / (1 - beta1 ** state['step'])
+                    step_size = group['lr'] * math.sqrt(
+                        (1 - beta2_t) * (N_sma - 4) / (N_sma_max - 4) * (N_sma - 2) / N_sma * N_sma_max / (
+                                    N_sma_max - 2)) / (1 - beta1 ** state['step'])
                     denom = exp_avg_sq.sqrt().add_(group['eps'])
                     p_data_fp32.addcdiv_(-step_size, exp_avg, denom)
                 else:
@@ -1039,6 +1059,7 @@ class Ralamb(Optimizer):
         >>> model = ResNet()
         >>> optimizer = Ralamb(model.parameters(), lr=0.001)
     '''
+
     def __init__(self, params, lr=1e-3, betas=(0.9, 0.999), eps=1e-8, weight_decay=0):
         defaults = dict(lr=lr, betas=betas, eps=eps, weight_decay=weight_decay)
         self.buffer = [[None, None, None] for ind in range(10)]
@@ -1097,7 +1118,9 @@ class Ralamb(Optimizer):
 
                     # more conservative since it's an approximated value
                     if N_sma >= 5:
-                        radam_step_size = math.sqrt((1 - beta2_t) * (N_sma - 4) / (N_sma_max - 4) * (N_sma - 2) / N_sma * N_sma_max / (N_sma_max - 2)) / (1 - beta1 ** state['step'])
+                        radam_step_size = math.sqrt(
+                            (1 - beta2_t) * (N_sma - 4) / (N_sma_max - 4) * (N_sma - 2) / N_sma * N_sma_max / (
+                                        N_sma_max - 2)) / (1 - beta1 ** state['step'])
                     else:
                         radam_step_size = 1.0 / (1 - beta1 ** state['step'])
                     buffered[2] = radam_step_size
@@ -1133,6 +1156,7 @@ class Ralamb(Optimizer):
 
         return loss
 
+
 class Lookahead(Optimizer):
     '''
     a PyTorch implementation of the Lookahead Optimizer from th paper
@@ -1145,7 +1169,8 @@ class Lookahead(Optimizer):
         >>> base_optimizer = optim.Adam(model.parameters(), lr=0.001)
         >>> optimizer = Lookahead(base_optimizer=base_optimizer,k=5,alpha=0.5)
     '''
-    def __init__(self, base_optimizer,alpha=0.5, k=6):
+
+    def __init__(self, base_optimizer, alpha=0.5, k=6):
         if not 0.0 <= alpha <= 1.0:
             raise ValueError(f'Invalid slow update rate: {alpha}')
         if not 1 <= k:
@@ -1157,7 +1182,7 @@ class Lookahead(Optimizer):
         for group in self.param_groups:
             group["step_counter"] = 0
         self.slow_weights = [[p.clone().detach() for p in group['params']]
-                                for group in self.param_groups]
+                             for group in self.param_groups]
 
         for w in it.chain(*self.slow_weights):
             w.requires_grad = False
@@ -1167,16 +1192,17 @@ class Lookahead(Optimizer):
         if closure is not None:
             loss = closure()
         loss = self.optimizer.step()
-        for group,slow_weights in zip(self.param_groups,self.slow_weights):
+        for group, slow_weights in zip(self.param_groups, self.slow_weights):
             group['step_counter'] += 1
             if group['step_counter'] % self.k != 0:
                 continue
-            for p,q in zip(group['params'],slow_weights):
+            for p, q in zip(group['params'], slow_weights):
                 if p.grad is None:
                     continue
-                q.data.add_(self.alpha,p.data - q.data)
+                q.data.add_(self.alpha, p.data - q.data)
                 p.data.copy_(q.data)
         return loss
+
 
 class RaLars(Optimizer):
     """Implements the RAdam optimizer from https://arxiv.org/pdf/1908.03265.pdf
@@ -1193,6 +1219,7 @@ class RaLars(Optimizer):
         >>> model = ResNet()
         >>> optimizer = RaLars(model.parameters(), lr=0.001)
     """
+
     def __init__(self, params, lr=1e-3, betas=(0.9, 0.999), eps=1e-8, weight_decay=0,
                  scale_clip=None):
         if not 0.0 <= lr:
@@ -1264,10 +1291,11 @@ class RaLars(Optimizer):
 
                 update = torch.zeros_like(p.data)
                 if sma_t > 4:
-                    # Variance rectification term
+                    #  Variance rectification term
                     r_t = math.sqrt((sma_t - 4) * (sma_t - 2) * sma_inf / ((sma_inf - 4) * (sma_inf - 2) * sma_t))
-                    # Adaptive momentum
-                    update.addcdiv_(r_t, exp_avg / bias_correction1, (exp_avg_sq / bias_correction2).sqrt().add_(group['eps']))
+                    #  Adaptive momentum
+                    update.addcdiv_(r_t, exp_avg / bias_correction1,
+                                    (exp_avg_sq / bias_correction2).sqrt().add_(group['eps']))
                 else:
                     # Unadapted momentum
                     update.add_(exp_avg / bias_correction1)
@@ -1292,6 +1320,7 @@ class RaLars(Optimizer):
 
         return loss
 
+
 class Ranger(Optimizer):
     '''
     Ranger - a synergistic optimizer combining RAdam (Rectified Adam) and LookAhead in one codebase.
@@ -1305,8 +1334,10 @@ class Ranger(Optimizer):
         >>> model = ResNet()
         >>> optimizer = Ranger(model.parameters(), lr=0.001)
     '''
-    def __init__(self, params, lr=1e-3, alpha=0.5, k=6, N_sma_threshhold=5, betas=(.95,0.999), eps=1e-5, weight_decay=0):
-        #parameter checks
+
+    def __init__(self, params, lr=1e-3, alpha=0.5, k=6, N_sma_threshhold=5, betas=(.95, 0.999), eps=1e-5,
+                 weight_decay=0):
+        # parameter checks
         if not 0.0 <= alpha <= 1.0:
             raise ValueError(f'Invalid slow update rate: {alpha}')
         if not 1 <= k:
@@ -1316,58 +1347,58 @@ class Ranger(Optimizer):
         if not eps > 0:
             raise ValueError(f'Invalid eps: {eps}')
 
-        #parameter comments:
+        # parameter comments:
         # beta1 (momentum) of .95 seems to work better than .90...
-        #N_sma_threshold of 5 seems better in testing than 4.
-        #In both cases, worth testing on your dataset (.90 vs .95, 4 vs 5) to make sure which works best for you.
+        # N_sma_threshold of 5 seems better in testing than 4.
+        # In both cases, worth testing on your dataset (.90 vs .95, 4 vs 5) to make sure which works best for you.
 
-        #prep defaults and init torch.optim base
-        defaults = dict(lr=lr, alpha=alpha, k=k, step_counter=0, betas=betas, N_sma_threshhold=N_sma_threshhold, eps=eps, weight_decay=weight_decay)
-        super().__init__(params,defaults)
+        # prep defaults and init torch.optim base
+        defaults = dict(lr=lr, alpha=alpha, k=k, step_counter=0, betas=betas, N_sma_threshhold=N_sma_threshhold,
+                        eps=eps, weight_decay=weight_decay)
+        super().__init__(params, defaults)
 
-        #adjustable threshold
+        # adjustable threshold
         self.N_sma_threshhold = N_sma_threshhold
 
-        #now we can get to work...
-        #removed as we now use step from RAdam...no need for duplicate step counting
-        #for group in self.param_groups:
+        # now we can get to work...
+        # removed as we now use step from RAdam...no need for duplicate step counting
+        # for group in self.param_groups:
         #    group["step_counter"] = 0
-            #print("group step counter init")
+        # print("group step counter init")
 
-        #look ahead params
+        # look ahead params
         self.alpha = alpha
         self.k = k
 
-        #radam buffer for state
-        self.radam_buffer = [[None,None,None] for ind in range(10)]
+        # radam buffer for state
+        self.radam_buffer = [[None, None, None] for ind in range(10)]
 
-        #self.first_run_check=0
+        # self.first_run_check=0
 
-        #lookahead weights
-        #9/2/19 - lookahead param tensors have been moved to state storage.
-        #This should resolve issues with load/save where weights were left in GPU memory from first load, slowing down future runs.
+        # lookahead weights
+        # 9/2/19 - lookahead param tensors have been moved to state storage.
+        # This should resolve issues with load/save where weights were left in GPU memory from first load, slowing down future runs.
 
-        #self.slow_weights = [[p.clone().detach() for p in group['params']]
+        # self.slow_weights = [[p.clone().detach() for p in group['params']]
         #                     for group in self.param_groups]
 
-        #don't use grad for lookahead weights
-        #for w in it.chain(*self.slow_weights):
+        # don't use grad for lookahead weights
+        # for w in it.chain(*self.slow_weights):
         #    w.requires_grad = False
 
     def __setstate__(self, state):
         print("set state called")
         super(Ranger, self).__setstate__(state)
 
-
     def step(self, closure=None):
         loss = None
-        #note - below is commented out b/c I have other work that passes back the loss as a float, and thus not a callable closure.
-        #Uncomment if you need to use the actual closure...
+        # note - below is commented out b/c I have other work that passes back the loss as a float, and thus not a callable closure.
+        # Uncomment if you need to use the actual closure...
 
-        #if closure is not None:
-            #loss = closure()
+        # if closure is not None:
+        # loss = closure()
 
-        #Evaluate averages and grad, update param tensors
+        # Evaluate averages and grad, update param tensors
         for group in self.param_groups:
 
             for p in group['params']:
@@ -1379,17 +1410,17 @@ class Ranger(Optimizer):
 
                 p_data_fp32 = p.data.float()
 
-                state = self.state[p]  #get state dict for this param
+                state = self.state[p]  # get state dict for this param
 
-                if len(state) == 0:   #if first time to run...init dictionary with our desired entries
-                    #if self.first_run_check==0:
-                        #self.first_run_check=1
-                        #print("Initializing slow buffer...should not see this at load from saved model!")
+                if len(state) == 0:  # if first time to run...init dictionary with our desired entries
+                    # if self.first_run_check==0:
+                    # self.first_run_check=1
+                    # print("Initializing slow buffer...should not see this at load from saved model!")
                     state['step'] = 0
                     state['exp_avg'] = torch.zeros_like(p_data_fp32)
                     state['exp_avg_sq'] = torch.zeros_like(p_data_fp32)
 
-                    #look ahead weight storage now in state dict
+                    # look ahead weight storage now in state dict
                     state['slow_buffer'] = torch.empty_like(p.data)
                     state['slow_buffer'].copy_(p.data)
 
@@ -1397,17 +1428,16 @@ class Ranger(Optimizer):
                     state['exp_avg'] = state['exp_avg'].type_as(p_data_fp32)
                     state['exp_avg_sq'] = state['exp_avg_sq'].type_as(p_data_fp32)
 
-                #begin computations
+                # begin computations
                 exp_avg, exp_avg_sq = state['exp_avg'], state['exp_avg_sq']
                 beta1, beta2 = group['betas']
 
-                #compute variance mov avg
+                # compute variance mov avg
                 exp_avg_sq.mul_(beta2).addcmul_(1 - beta2, grad, grad)
-                #compute mean moving avg
+                # compute mean moving avg
                 exp_avg.mul_(beta1).add_(1 - beta1, grad)
 
                 state['step'] += 1
-
 
                 buffered = self.radam_buffer[int(state['step'] % 10)]
                 if state['step'] == buffered[0]:
@@ -1419,7 +1449,9 @@ class Ranger(Optimizer):
                     N_sma = N_sma_max - 2 * state['step'] * beta2_t / (1 - beta2_t)
                     buffered[1] = N_sma
                     if N_sma > self.N_sma_threshhold:
-                        step_size = math.sqrt((1 - beta2_t) * (N_sma - 4) / (N_sma_max - 4) * (N_sma - 2) / N_sma * N_sma_max / (N_sma_max - 2)) / (1 - beta1 ** state['step'])
+                        step_size = math.sqrt(
+                            (1 - beta2_t) * (N_sma - 4) / (N_sma_max - 4) * (N_sma - 2) / N_sma * N_sma_max / (
+                                        N_sma_max - 2)) / (1 - beta1 ** state['step'])
                     else:
                         step_size = 1.0 / (1 - beta1 ** state['step'])
                     buffered[2] = step_size
@@ -1435,14 +1467,15 @@ class Ranger(Optimizer):
 
                 p.data.copy_(p_data_fp32)
 
-                #integrated look ahead...
-                #we do it at the param level instead of group level
+                # integrated look ahead...
+                # we do it at the param level instead of group level
                 if state['step'] % group['k'] == 0:
-                    slow_p = state['slow_buffer'] #get access to slow param tensor
-                    slow_p.add_(self.alpha, p.data - slow_p)  #(fast weights - slow weights) * alpha
-                    p.data.copy_(slow_p)  #copy interpolated weights to RAdam param tensor
+                    slow_p = state['slow_buffer']  # get access to slow param tensor
+                    slow_p.add_(self.alpha, p.data - slow_p)  # (fast weights - slow weights) * alpha
+                    p.data.copy_(slow_p)  # copy interpolated weights to RAdam param tensor
 
         return loss
+
 
 class BertAdam(Optimizer):
     """Implements BERT version of Adam algorithm with weight decay fix.
@@ -1458,6 +1491,7 @@ class BertAdam(Optimizer):
         weight_decay: Weight decay. Default: 0.01
         max_grad_norm: Maximum norm for the gradients (-1 means no clipping). Default: 1.0
     """
+
     def __init__(self, params, lr, warmup=-1, t_total=-1, schedule='warmup_linear',
                  b1=0.9, b2=0.999, e=1e-6, weight_decay=0.01,
                  max_grad_norm=1.0):
@@ -1487,7 +1521,7 @@ class BertAdam(Optimizer):
                     return [0]
                 if group['t_total'] != -1:
                     schedule_fct = SCHEDULES[group['schedule']]
-                    lr_scheduled = group['lr'] * schedule_fct(state['step']/group['t_total'], group['warmup'])
+                    lr_scheduled = group['lr'] * schedule_fct(state['step'] / group['t_total'], group['warmup'])
                 else:
                     lr_scheduled = group['lr']
                 lr.append(lr_scheduled)
@@ -1540,7 +1574,7 @@ class BertAdam(Optimizer):
 
                 if group['t_total'] != -1:
                     schedule_fct = SCHEDULES[group['schedule']]
-                    lr_scheduled = group['lr'] * schedule_fct(state['step']/group['t_total'], group['warmup'])
+                    lr_scheduled = group['lr'] * schedule_fct(state['step'] / group['t_total'], group['warmup'])
                 else:
                     lr_scheduled = group['lr']
 

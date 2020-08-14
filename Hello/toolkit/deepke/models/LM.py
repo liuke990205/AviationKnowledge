@@ -1,8 +1,9 @@
-from torch import nn
-from . import BasicModule
 from module import RNN
+from torch import nn
 from transformers import BertModel
 from utils import seq_len_to_mask
+
+from . import BasicModule
 
 
 class LM(BasicModule):

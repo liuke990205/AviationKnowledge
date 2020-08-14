@@ -26,7 +26,8 @@ class connDB(object):
                 self._user + "/" + self._password + "@" + self._host + ":" + self._port + "/" + self._database)
             return conn
 
-#跳转到管理主页面
+
+# 跳转到管理主页面
 def toD2rq(request):
     # conn = pymysql.connect(host='127.0.0.1', port=3306, user='root', password='root', database='source')
     '''
@@ -41,36 +42,38 @@ def toD2rq(request):
     '''
     return render(request, 'd2rq.html')
 
-#接收前端提交的关系数据库类型信息，返回到主页面
+
+# 接收前端提交的关系数据库类型信息，返回到主页面
 def commitDatabase(request):
     database = request.POST['database']
     request.session['database'] = database
 
     return render(request, 'd2rq.html', {"database": database})
 
-#接收前端提交的数据库连接配置信息
+
+# 接收前端提交的数据库连接配置信息
 def commitConfiguration(request):
-    #获取前端提交的配置信息
+    # 获取前端提交的配置信息
     host = request.POST['host']
     port = request.POST['port']
     username = request.POST['username']
     password = request.POST['password']
     db_name = request.POST['db_name']
     database = request.session.get('database')
-    #将配置信息保存到session中
+    # 将配置信息保存到session中
     request.session['host'] = host
     request.session['port'] = port
     request.session['username2'] = username
     request.session['password'] = password
     request.session['db_name'] = db_name
     request.session['database'] = database
-    #根据不同类型的关系数据库来分别连接
+    # 根据不同类型的关系数据库来分别连接
     if database == 'MySQL':
-        #连接关系数据库
+        # 连接关系数据库
         conn = connDB(database, host, int(port), username, password, db_name).connectDB()
-        #获取操作游标
+        # 获取操作游标
         cursor = conn.cursor()
-        #查找所有数据库表
+        # 查找所有数据库表
         count = cursor.execute("show tables")
         tableList = list()
         for i in range(count):
@@ -85,7 +88,7 @@ def getTable(request):
     table = request.POST['databaseTable']
     # 将数据库表名存入session
     request.session['table'] = table
-    #获取session中的数据库配置信息
+    # 获取session中的数据库配置信息
     database = request.session.get('database')
     host = request.session.get('host')
     username = request.session.get('username2')
@@ -144,7 +147,7 @@ def getTable(request):
 
 # 从关系数据库中抽取知识
 def d2neo4j(request):
-    #从session里面获取信息
+    # 从session里面获取信息
     table = request.session.get('table')
     entity_name = request.POST.get('entity_name')
     entity_property = request.POST.getlist('entity_property')
@@ -156,20 +159,20 @@ def d2neo4j(request):
     db_name = request.session.get('db_name')
     port = request.session.get('port')
 
-    #插入第一个节点信息
+    # 插入第一个节点信息
     insertNode(table, entity_name, entity_property, database, host, username, password, db_name, port)
 
-    #从session里面获取第二个实体名和属性列表
+    # 从session里面获取第二个实体名和属性列表
     entity_name2 = request.POST.get('entity_name2')
     entity_property2 = request.POST.getlist('entity_property2')
 
-    #如果存在第二个节点信息
+    # 如果存在第二个节点信息
     if entity_name2:
         table2 = request.session.get('table2')
         insertNode(table2, entity_name2, entity_property2, database, host, username, password, db_name, port)
 
         re_name = request.session.get('re_name')
-        #生成知识信息
+        # 生成知识信息
         insertKnow(table2, entity_name2, re_name, database, host, username, password, db_name, port)
 
     messages.success(request, "success!")
@@ -180,25 +183,25 @@ def insertNode(table, entity_name, entity_property, database, host, username, pa
     # 连接数据库
     conn = connDB(database, host, int(port), username, password, db_name).connectDB()
     cursor = conn.cursor()
-    #拼接属性列表
+    # 拼接属性列表
     str = ','.join(entity_property)
     # print(str)
-    #根据查询条件编写的查询语句
+    # 根据查询条件编写的查询语句
     sql = "select %s, %s from %s" % (entity_name, str, table)
     count = cursor.execute(sql)
-    #存储查询结果集（字典存储）
+    # 存储查询结果集（字典存储）
     dict = {}
-    #循环来遍历游标指针
+    # 循环来遍历游标指针
     for i in range(count):
         result = cursor.fetchone()
         print(result)
-        #将查询结果转换成列表存储
+        # 将查询结果转换成列表存储
         result = list(result)
-        #查询到的第一个值是实体名
+        # 查询到的第一个值是实体名
         name = result[0]
-        #连接neo4j数据库
+        # 连接neo4j数据库
         db = neo4jconn
-        #根据实体名来查找neo4j数据库是否已经存在实体
+        # 根据实体名来查找neo4j数据库是否已经存在实体
         result1 = db.findEntity(name)
         if result1:
             pass
@@ -212,7 +215,7 @@ def insertNode(table, entity_name, entity_property, database, host, username, pa
                 if entity.entity == name:
                     type = entity.entity_type
                     break
-            #如果存在实体类型
+            # 如果存在实体类型
             if type:
                 # 生成实体节点
                 result.remove(name)
@@ -221,7 +224,7 @@ def insertNode(table, entity_name, entity_property, database, host, username, pa
                 db = neo4jconn
                 db.createNode(name, type, dict)
     cursor.close()  # 关闭游标
-    conn.close()    # 关闭连接
+    conn.close()  # 关闭连接
 
 
 def insertKnow(table2, entity_name2, re_name, database, host, username, password, db_name, port):
@@ -231,7 +234,7 @@ def insertKnow(table2, entity_name2, re_name, database, host, username, password
     # 连接关系数据库
     conn = connDB(database, host, int(port), username, password, db_name).connectDB()
     cursor = conn.cursor()
-    #查询语句
+    # 查询语句
     sql = "select %s, %s from %s" % (entity_name2, re_name, table2)
 
     count = cursor.execute(sql)

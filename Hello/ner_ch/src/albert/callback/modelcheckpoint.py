@@ -1,7 +1,10 @@
 from pathlib import Path
+
 import numpy as np
 import torch
+
 from ..common.tools import logger
+
 
 class ModelCheckpoint(object):
     '''
@@ -9,13 +12,14 @@ class ModelCheckpoint(object):
     1. 直接保存最好模型
     2. 按照epoch频率保存模型
     '''
+
     def __init__(self, checkpoint_dir,
                  monitor,
-                 arch,mode='min',
+                 arch, mode='min',
                  epoch_freq=1,
-                 best = None,
-                 save_best_only = True):
-        if isinstance(checkpoint_dir,Path):
+                 best=None,
+                 save_best_only=True):
+        if isinstance(checkpoint_dir, Path):
             checkpoint_dir = checkpoint_dir
         else:
             checkpoint_dir = Path(checkpoint_dir)
@@ -36,14 +40,14 @@ class ModelCheckpoint(object):
             self.monitor_op = np.greater
             self.best = -np.Inf
         # 这里主要重新加载模型时候
-        #对best重新赋值
+        # 对best重新赋值
         if best:
             self.best = best
 
         if save_best_only:
             self.model_name = f"BEST_{arch}_MODEL.pth"
 
-    def epoch_step(self, state,current):
+    def epoch_step(self, state, current):
         '''
         正常模型
         :param state: 需要保存的信息
@@ -56,7 +60,7 @@ class ModelCheckpoint(object):
                 logger.info(f"\nEpoch {state['epoch']}: {self.monitor} improved from {self.best:.5f} to {current:.5f}")
                 self.best = current
                 state['best'] = self.best
-                best_path = self.base_path/ self.model_name
+                best_path = self.base_path / self.model_name
                 torch.save(state, str(best_path))
         # 每隔几个epoch保存下模型
         else:
@@ -65,7 +69,7 @@ class ModelCheckpoint(object):
                 logger.info(f"\nEpoch {state['epoch']}: save model to disk.")
                 torch.save(state, str(filename))
 
-    def bert_epoch_step(self, state,current):
+    def bert_epoch_step(self, state, current):
         '''
         适合bert类型模型，适合pytorch_transformer模块
         :param state:
@@ -83,7 +87,7 @@ class ModelCheckpoint(object):
                 with open(str(output_config_file), 'w') as f:
                     f.write(model_to_save.config.to_json_string())
                 state.pop("model")
-                torch.save(state,self.base_path / 'checkpoint_info.bin')
+                torch.save(state, self.base_path / 'checkpoint_info.bin')
         else:
             if state['epoch'] % self.epoch_freq == 0:
                 save_path = self.base_path / f"checkpoint-epoch-{state['epoch']}"

@@ -1,14 +1,16 @@
-import os
-import json
-import random
-import numpy as np
 import collections
-from configs.base import config
-from common.tools import logger, init_logger
+import json
+import os
+import random
 from argparse import ArgumentParser
-from common.tools import seed_everything
-from model.tokenization_bert import BertTokenizer
+
+import numpy as np
+
 from callback.progressbar import ProgressBar
+from common.tools import logger, init_logger
+from common.tools import seed_everything
+from configs.base import config
+from model.tokenization_bert import BertTokenizer
 
 MaskedLmInstance = collections.namedtuple("MaskedLmInstance", ["index", "label"])
 init_logger(log_file=config['log_dir'] / ("pregenerate_training_data_ngram.log"))

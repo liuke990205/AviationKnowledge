@@ -1,9 +1,12 @@
-import torch
 import csv
-from callback.progressbar import ProgressBar
-from model.tokenization_bert import BertTokenizer
-from common.tools import logger
+
+import torch
 from torch.utils.data import TensorDataset
+
+from callback.progressbar import ProgressBar
+from common.tools import logger
+from model.tokenization_bert import BertTokenizer
+
 
 class InputExample(object):
     def __init__(self, guid, text_a, text_b=None, label=None):

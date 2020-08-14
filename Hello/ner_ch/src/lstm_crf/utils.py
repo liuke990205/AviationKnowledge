@@ -1,16 +1,17 @@
 # -*- coding:utf-8 -*-
 
-def format_result(result, text, tag): 
-    entities = [] 
-    for i in result: 
-        begin, end = i 
-        entities.append({ 
-            "start":begin, 
-            "stop":end + 1, 
-            "word":text[begin:end+1],
-            "type":tag
-        }) 
+def format_result(result, text, tag):
+    entities = []
+    for i in result:
+        begin, end = i
+        entities.append({
+            "start": begin,
+            "stop": end + 1,
+            "word": text[begin:end + 1],
+            "type": tag
+        })
     return entities
+
 
 def get_tags(path, tag, tag_map):
     begin_tag = tag_map.get("B_" + tag)
@@ -28,6 +29,7 @@ def get_tags(path, tag, tag_map):
             if ner_index != 0:
                 tags.append([index_1, index_1 + ner_index])
     return tags
+
 
 def f1_score(tar_path, pre_path, tag, tag_map):
     '''
@@ -62,6 +64,6 @@ def f1_score(tar_path, pre_path, tag, tag_map):
 
     recall = 0. if origin == 0 else (right / origin)
     precision = 0. if found == 0 else (right / found)
-    f1 = 0. if recall+precision == 0 else (2*precision*recall)/(precision + recall)
+    f1 = 0. if recall + precision == 0 else (2 * precision * recall) / (precision + recall)
     print("\t{}\trecall {:.2f}\tprecision {:.2f}\tf1 {:.2f}".format(tag, recall, precision, f1))
     return recall, precision, f1

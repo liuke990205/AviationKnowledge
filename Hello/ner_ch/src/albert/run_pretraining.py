@@ -1,24 +1,25 @@
-import torch
 import json
 import time
-import numpy as np
-from pathlib import Path
 from argparse import ArgumentParser
 from collections import namedtuple
+from pathlib import Path
 from tempfile import TemporaryDirectory
-from common.tools import logger, init_logger
-from configs.base import config
+
+import numpy as np
+import torch
+from torch.nn import CrossEntropyLoss
 from torch.utils.data import DataLoader, Dataset, RandomSampler
 from torch.utils.data.distributed import DistributedSampler
-from common.tools import AverageMeter
+
 from common.metrics import LMAccuracy
-from torch.nn import CrossEntropyLoss, MSELoss
-from model.modeling_albert import BertForPreTraining, BertConfig
-from model.file_utils import CONFIG_NAME
-from model.tokenization_bert import BertTokenizer
-from model.optimization import AdamW, WarmupLinearSchedule
-from callback.optimizater import Lamb
+from common.tools import AverageMeter
+from common.tools import logger, init_logger
 from common.tools import seed_everything
+from configs.base import config
+from model.file_utils import CONFIG_NAME
+from model.modeling_albert import BertForPreTraining, BertConfig
+from model.optimization import AdamW, WarmupLinearSchedule
+from model.tokenization_bert import BertTokenizer
 
 InputFeatures = namedtuple("InputFeatures", "input_ids input_mask segment_ids lm_label_ids is_next")
 init_logger(log_file=config['log_dir'] / ("train_albert_model.log"))
@@ -124,7 +125,7 @@ def main():
                         help="Store training data as on-disc memmaps to massively reduce memory usage")
     parser.add_argument("--epochs", type=int, default=4,
                         help="Number of epochs to train for")
-    parser.add_argument('--share_type',default='all',type=str,choices=['all','attention','ffn','None'])
+    parser.add_argument('--share_type', default='all', type=str, choices=['all', 'attention', 'ffn', 'None'])
     parser.add_argument('--num_eval_steps', default=100)
     parser.add_argument('--num_save_steps', default=200)
     parser.add_argument("--local_rank", type=int, default=-1,
@@ -200,7 +201,7 @@ def main():
         num_train_optimization_steps = num_train_optimization_steps // torch.distributed.get_world_size()
     args.warmup_steps = int(num_train_optimization_steps * args.warmup_proportion)
 
-    bert_config = BertConfig.from_pretrained(str(config['albert_config_path']),share_type=args.share_type)
+    bert_config = BertConfig.from_pretrained(str(config['albert_config_path']), share_type=args.share_type)
     model = BertForPreTraining(config=bert_config)
     # model = BertForMaskedLM.from_pretrained(config['checkpoint_dir'] / 'checkpoint-580000')
     model.to(device)
@@ -342,6 +343,7 @@ def main():
 
                         # save vocab
                         tokenizer.save_vocabulary(output_dir)
+
 
 if __name__ == '__main__':
     main()

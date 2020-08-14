@@ -1,10 +1,9 @@
-import os
 import csv
 import json
-import pickle
 import logging
-from typing import NewType, List, Tuple, Dict, Any
-
+import os
+import pickle
+from typing import List, Dict, Any
 
 __all__ = [
     'load_pkl',

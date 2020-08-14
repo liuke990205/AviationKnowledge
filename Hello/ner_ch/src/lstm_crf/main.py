@@ -1,19 +1,20 @@
 # -*- coding:utf-8 -*-
 
-import yaml
-import sys
 import torch
 import torch.optim as optim
+import yaml
+
+from configs.base import config
 from lstm_crf.data_format import DataFormat
 from lstm_crf.model import BiLSTMCRF
 from lstm_crf.utils import f1_score, get_tags, format_result
-from configs.base import config
 from model.tokenization_bert import BertTokenizer
 
 DEVICE = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
+
 class NER(object):
-    
+
     def __init__(self, exec_type="train"):
         self.load_config()
         self.__init_model(exec_type)
@@ -52,10 +53,10 @@ class NER(object):
                 "embedding_size": 768,
                 "hidden_size": 128,
                 "batch_size": 64,
-                "max_length":128,
-                "dropout":0.5,
+                "max_length": 128,
+                "dropout": 0.5,
                 "model_path": "Hello/ner_ch/src/lstm_crf/models/",
-                "tasg": ['AIR','WEA','MATH','SYS','TAR','DOC']
+                "tasg": ['AIR', 'WEA', 'MATH', 'SYS', 'TAR', 'DOC']
             }
             yaml.dump(config, fopen)
             fopen.close()
@@ -77,8 +78,8 @@ class NER(object):
 
     def train(self):
         self.model.to(DEVICE)
-        #weight decay是放在正则项（regularization）前面的一个系数，正则项一般指示模型的复杂度，所以weight decay的作用是调节模型复杂度对损失函数的影响，若weight decay很大，则复杂的模型损失函数的值也就大。
-        optimizer = optim.Adam(self.model.parameters(), lr = 0.001, weight_decay=0.0005)
+        # weight decay是放在正则项（regularization）前面的一个系数，正则项一般指示模型的复杂度，所以weight decay的作用是调节模型复杂度对损失函数的影响，若weight decay很大，则复杂的模型损失函数的值也就大。
+        optimizer = optim.Adam(self.model.parameters(), lr=0.001, weight_decay=0.0005)
         '''
         当网络的评价指标不在提升的时候，可以通过降低网络的学习率来提高网络性能:
         optimer指的是网络的优化器
@@ -188,7 +189,8 @@ class NER(object):
         tokenizer = BertTokenizer.from_pretrained(VOCAB)
         with torch.no_grad():
             input_str = str
-            input_ids = tokenizer.encode(input_str,add_special_tokens=True)  # add_spicial_tokens=True，为自动为sentence加上[CLS]和[SEP]
+            input_ids = tokenizer.encode(input_str,
+                                         add_special_tokens=True)  # add_spicial_tokens=True，为自动为sentence加上[CLS]和[SEP]
             input_mask = [1] * len(input_ids)
             output_mask = [0] + [1] * (len(input_ids) - 2) + [0]  # 用于屏蔽特殊token
 
@@ -207,6 +209,3 @@ class NER(object):
                 tags = get_tags(predicts[0], tag, self.model.tag_map)
                 entities += format_result(tags, input_str, tag)
             return entities
-
-
-

@@ -1,12 +1,12 @@
-#encoding:utf-8
-import torch
-from tqdm import tqdm
+# encoding:utf-8
 import numpy as np
-from collections import Counter
-from sklearn.metrics import roc_auc_score
+import torch
 from sklearn.metrics import f1_score, classification_report
+from sklearn.metrics import roc_auc_score
+from tqdm import tqdm
 
-__call__ = ['Accuracy','AUC','F1Score','EntityScore','ClassReport','MultiLabelReport','AccuracyThresh']
+__call__ = ['Accuracy', 'AUC', 'F1Score', 'EntityScore', 'ClassReport', 'MultiLabelReport', 'AccuracyThresh']
+
 
 class Metric:
     def __init__(self):
@@ -24,6 +24,7 @@ class Metric:
     def name(self):
         raise NotImplementedError
 
+
 class Accuracy(Metric):
     '''
     计算准确度
@@ -37,8 +38,9 @@ class Accuracy(Metric):
         >>>         metrics(logits,target)
         >>>         print(metrics.name(),metrics.value())
     '''
-    def __init__(self,topK):
-        super(Accuracy,self).__init__()
+
+    def __init__(self, topK):
+        super(Accuracy, self).__init__()
         self.topK = topK
         self.reset()
 
@@ -54,7 +56,7 @@ class Accuracy(Metric):
         self.total = 0
 
     def value(self):
-        return float(self.correct_k)  / self.total
+        return float(self.correct_k) / self.total
 
     def name(self):
         return 'accuracy'
@@ -73,8 +75,9 @@ class AccuracyThresh(Metric):
         >>>         metrics(logits,target)
         >>>         print(metrics.name(),metrics.value())
     '''
-    def __init__(self,thresh = 0.5):
-        super(AccuracyThresh,self).__init__()
+
+    def __init__(self, thresh=0.5):
+        super(AccuracyThresh, self).__init__()
         self.thresh = thresh
         self.reset()
 
@@ -88,7 +91,7 @@ class AccuracyThresh(Metric):
 
     def value(self):
         data_size = self.y_pred.size(0)
-        acc = np.mean(((self.y_pred>self.thresh)==self.y_true.byte()).float().cpu().numpy(), axis=1).sum()
+        acc = np.mean(((self.y_pred > self.thresh) == self.y_true.byte()).float().cpu().numpy(), axis=1).sum()
         return acc / data_size
 
     def name(self):
@@ -119,16 +122,16 @@ class AUC(Metric):
         >>>         print(metrics.name(),metrics.value())
     '''
 
-    def __init__(self,task_type = 'binary',average = 'binary'):
+    def __init__(self, task_type='binary', average='binary'):
         super(AUC, self).__init__()
 
-        assert task_type in ['binary','multiclass']
-        assert average in ['binary','micro', 'macro', 'samples', 'weighted']
+        assert task_type in ['binary', 'multiclass']
+        assert average in ['binary', 'micro', 'macro', 'samples', 'weighted']
 
         self.task_type = task_type
         self.average = average
 
-    def __call__(self,logits,target):
+    def __call__(self, logits, target):
         '''
         计算整个结果
         '''
@@ -151,6 +154,7 @@ class AUC(Metric):
 
     def name(self):
         return 'auc'
+
 
 class F1Score(Metric):
     '''
@@ -178,18 +182,19 @@ class F1Score(Metric):
         >>>         metrics(logits,target)
         >>>         print(metrics.name(),metrics.value())
     '''
-    def __init__(self,thresh = 0.5, normalizate = True,task_type = 'binary',average = 'binary',search_thresh = False):
+
+    def __init__(self, thresh=0.5, normalizate=True, task_type='binary', average='binary', search_thresh=False):
         super(F1Score).__init__()
-        assert task_type in ['binary','multiclass']
-        assert average in ['binary','micro', 'macro', 'samples', 'weighted']
+        assert task_type in ['binary', 'multiclass']
+        assert average in ['binary', 'micro', 'macro', 'samples', 'weighted']
 
         self.thresh = thresh
         self.task_type = task_type
-        self.normalizate  = normalizate
+        self.normalizate = normalizate
         self.search_thresh = search_thresh
         self.average = average
 
-    def thresh_search(self,y_prob):
+    def thresh_search(self, y_prob):
         '''
         对于f1评分的指标，一般我们需要对阈值进行调整，一般不会使用默认的0.5值，因此
         这里我们队Thresh进行优化
@@ -203,9 +208,9 @@ class F1Score(Metric):
             if score > best_score:
                 best_threshold = threshold
                 best_score = score
-        return best_threshold,best_score
+        return best_threshold, best_score
 
-    def __call__(self,logits,target):
+    def __call__(self, logits, target):
         '''
         计算整个结果
         :return:
@@ -220,10 +225,10 @@ class F1Score(Metric):
 
         if self.task_type == 'binary':
             if self.thresh and self.search_thresh == False:
-                self.y_pred = (y_prob > self.thresh ).astype(int)
+                self.y_pred = (y_prob > self.thresh).astype(int)
                 self.value()
             else:
-                thresh,f1 = self.thresh_search(y_prob = y_prob)
+                thresh, f1 = self.thresh_search(y_prob=y_prob)
                 print(f"Best thresh: {thresh:.4f} - F1 Score: {f1:.4f}")
 
         if self.task_type == 'multiclass':
@@ -247,11 +252,13 @@ class F1Score(Metric):
     def name(self):
         return 'f1'
 
+
 class ClassReport(Metric):
     '''
     class report
     '''
-    def __init__(self,target_names = None):
+
+    def __init__(self, target_names=None):
         super(ClassReport).__init__()
         self.target_names = target_names
 
@@ -263,10 +270,10 @@ class ClassReport(Metric):
         '''
         计算指标得分
         '''
-        score = classification_report(y_true = self.y_true, y_pred = self.y_pred, target_names=self.target_names)
+        score = classification_report(y_true=self.y_true, y_pred=self.y_pred, target_names=self.target_names)
         print(f"\n\n classification report: {score}")
 
-    def __call__(self,logits,target):
+    def __call__(self, logits, target):
         _, y_pred = torch.max(logits.data, 1)
         self.y_pred = y_pred.cpu().numpy()
         self.y_true = target.cpu().numpy()
@@ -274,11 +281,13 @@ class ClassReport(Metric):
     def name(self):
         return "class_report"
 
+
 class MultiLabelReport(Metric):
     '''
     multi label report
     '''
-    def __init__(self,id2label = None):
+
+    def __init__(self, id2label=None):
         super(MultiLabelReport).__init__()
         self.id2label = id2label
 
@@ -286,8 +295,7 @@ class MultiLabelReport(Metric):
         self.y_prob = 0
         self.y_true = 0
 
-    def __call__(self,logits,target):
-
+    def __call__(self, logits, target):
         self.y_prob = logits.sigmoid().data.cpu().detach().numpy()
         self.y_true = target.cpu().numpy()
 
@@ -304,12 +312,12 @@ class MultiLabelReport(Metric):
 
 
 class LMAccuracy(Metric):
-    def __init__(self,topK =1):
+    def __init__(self, topK=1):
         super(LMAccuracy).__init__()
         self.topK = topK
         self.reset()
 
-    def __call__(self,logits,target):
+    def __call__(self, logits, target):
         pred = torch.argmax(logits, 1)
         active_acc = target.view(-1) != -1
         active_pred = pred[active_acc]
@@ -328,5 +336,3 @@ class LMAccuracy(Metric):
 
     def name(self):
         return 'accuracy'
-
-

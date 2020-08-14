@@ -1,4 +1,5 @@
 import logging
+
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
@@ -26,7 +27,7 @@ class DotAttention(nn.Module):
         """
         H = Q.size(-1)
 
-        scale = float(H)**0.5
+        scale = float(H) ** 0.5
         attention_weight = torch.matmul(Q, K.transpose(-1, -2)) / scale
 
         if mask_out is not None:

@@ -72,7 +72,6 @@ class RNN(nn.Module):
 
 
 if __name__ == '__main__':
-
     class Config(object):
         type_rnn = 'LSTM'
         input_size = 5
@@ -81,6 +80,7 @@ if __name__ == '__main__':
         dropout = 0.0
         last_layer_hn = False
         bidirectional = True
+
 
     config = Config()
     model = RNN(config)

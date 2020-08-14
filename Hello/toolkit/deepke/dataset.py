@@ -49,6 +49,7 @@ def collate_fn(cfg):
 
 class CustomDataset(Dataset):
     """默认使用 List 存储数据"""
+
     def __init__(self, fp):
         self.file = load_pkl(fp)
 
@@ -62,6 +63,7 @@ class CustomDataset(Dataset):
 
 if __name__ == '__main__':
     from torch.utils.data import DataLoader
+
     train_data_path = 'data/out/train.pkl'
     vocab_path = 'data/out/vocab.pkl'
     unk_str = 'UNK'

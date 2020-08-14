@@ -21,7 +21,7 @@ class Embedding(nn.Module):
         self.wordEmbed = nn.Embedding(self.vocab_size, self.word_dim, padding_idx=0)
         self.headPosEmbed = nn.Embedding(self.pos_size, self.pos_dim, padding_idx=0)
         self.tailPosEmbed = nn.Embedding(self.pos_size, self.pos_dim, padding_idx=0)
-        
+
         self.layer_norm = nn.LayerNorm(self.word_dim)
 
     def forward(self, *x):

@@ -1,6 +1,7 @@
-import torch
 import logging
+
 import matplotlib.pyplot as plt
+import torch
 from metrics import PRMetric
 
 logger = logging.getLogger(__name__)

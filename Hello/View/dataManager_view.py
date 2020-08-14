@@ -4,7 +4,7 @@ from django.contrib import messages
 from django.shortcuts import render, redirect
 
 from Hello.View.relation_view import Screen
-from Hello.models import Annotation, User, Temp
+from Hello.models import User, Temp
 from Hello.toolkit.pre_load import neo4jconn
 
 
@@ -151,9 +151,6 @@ def deleteAllNeo4j(request):
     # 获取删除之后的Temp
     tempList = Temp.objects.filter(user_id=user_id)
     return redirect('/toDataManager/')
-
-
-
 
 
 # 导出Neo4J数据库

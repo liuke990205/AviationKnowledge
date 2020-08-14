@@ -1,8 +1,9 @@
-import torch
-import random
 import logging
+import random
+from typing import List, Union
+
 import numpy as np
-from typing import List, Tuple, Dict, Union
+import torch
 
 logger = logging.getLogger(__name__)
 

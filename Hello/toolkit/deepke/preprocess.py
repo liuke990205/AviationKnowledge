@@ -1,11 +1,12 @@
-import os
 import logging
+import os
 from collections import OrderedDict
 from typing import List, Dict
-from transformers import BertTokenizer
+
 from serializer import Serializer
-from vocab import Vocab
+from transformers import BertTokenizer
 from utils import save_pkl, load_csv
+from vocab import Vocab
 
 logger = logging.getLogger(__name__)
 
@@ -34,7 +35,7 @@ def _add_pos_seq(train_data: List[Dict], cfg):
             if cfg.use_pcnn:
                 # 当句子无法分隔成三段时，无法使用PCNN
                 # 比如： [head, ... tail] or [... head, tail, ...] 无法使用统一方式 mask 分段
-                d['entities_pos'] = [1] * (entities_idx[0] + 1) + [2] * (entities_idx[1] - entities_idx[0] - 1) +\
+                d['entities_pos'] = [1] * (entities_idx[0] + 1) + [2] * (entities_idx[1] - entities_idx[0] - 1) + \
                                     [3] * (d['seq_len'] - entities_idx[1])
 
 
@@ -99,7 +100,6 @@ def _handle_relation_data(relation_data: List[Dict]) -> Dict:
 
 
 def preprocess(cfg):
-
     logger.info('===== start preprocess data =====')
     train_fp = os.path.join(cfg.cwd, cfg.data_path, 'train.csv')
     valid_fp = os.path.join(cfg.cwd, cfg.data_path, 'valid.csv')

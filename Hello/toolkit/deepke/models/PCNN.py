@@ -1,9 +1,10 @@
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from . import BasicModule
 from module import Embedding, CNN
 from utils import seq_len_to_mask
+
+from . import BasicModule
 
 
 class PCNN(BasicModule):
@@ -29,7 +30,6 @@ class PCNN(BasicModule):
             masks = torch.tensor([[0, 0, 0], [100, 0, 0], [0, 100, 0], [0, 0, 100]])
             self.pcnn_mask_embedding.weight.data.copy_(masks)
             self.pcnn_mask_embedding.weight.requires_grad = False
-
 
     def forward(self, x):
         word, lens, head_pos, tail_pos = x['word'], x['lens'], x['head_pos'], x['tail_pos']

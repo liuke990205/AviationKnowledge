@@ -28,6 +28,7 @@ from .file_utils import cached_path, CONFIG_NAME
 
 logger = logging.getLogger(__name__)
 
+
 class PretrainedConfig(object):
     r""" Base class for all configuration classes.
         Handles a few parameters common to all models' configurations as well as methods for loading/downloading/saving configurations.
@@ -60,7 +61,8 @@ class PretrainedConfig(object):
         """ Save a configuration object to the directory `save_directory`, so that it
             can be re-loaded using the :func:`~pytorch_transformers.PretrainedConfig.from_pretrained` class method.
         """
-        assert os.path.isdir(save_directory), "Saving path should be a directory where the model and configuration can be saved"
+        assert os.path.isdir(
+            save_directory), "Saving path should be a directory where the model and configuration can be saved"
 
         # If we save using the predefined names, we can load using `from_pretrained`
         output_config_file = os.path.join(save_directory, CONFIG_NAME)
@@ -127,7 +129,8 @@ class PretrainedConfig(object):
             config_file = pretrained_model_name_or_path
         # redirect to the cache, if necessary
         try:
-            resolved_config_file = cached_path(config_file, cache_dir=cache_dir, force_download=force_download, proxies=proxies)
+            resolved_config_file = cached_path(config_file, cache_dir=cache_dir, force_download=force_download,
+                                               proxies=proxies)
         except EnvironmentError as e:
             if pretrained_model_name_or_path in cls.pretrained_config_archive_map:
                 logger.error(
@@ -161,7 +164,7 @@ class PretrainedConfig(object):
                 setattr(config, key, value)
                 to_remove.append(key)
             else:
-                setattr(config,key,value)
+                setattr(config, key, value)
         for key in to_remove:
             kwargs.pop(key, None)
 

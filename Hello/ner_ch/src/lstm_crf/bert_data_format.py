@@ -1,17 +1,18 @@
 # -*- coding: utf-8 -*-
 import torch
 from torch.utils.data import TensorDataset, DataLoader, RandomSampler
+
 from configs.base import config
 from model.modeling_albert import BertConfig, BertModel
 from model.tokenization_bert import BertTokenizer
 
-import os
 
 class InputFeatures(object):
     def __init__(self, input_id, label_id, input_mask):
         self.input_id = input_id
         self.label_id = label_id
         self.input_mask = input_mask
+
 
 def read_corpus(train_file_data, train_file_tag, max_length, label_dic):
     """
@@ -32,14 +33,14 @@ def read_corpus(train_file_data, train_file_tag, max_length, label_dic):
             for text, label in zip(train_data, tag_data):
                 tokens = text.split()
                 label = label.split()
-                if len(tokens) > max_length-2: #大于最大长度进行截断
-                    tokens = tokens[0:(max_length-2)]
-                    label = label[0:(max_length-2)]
-                tokens_cs ='[CLS] ' + ' '.join(tokens) + ' [SEP]'
+                if len(tokens) > max_length - 2:  # 大于最大长度进行截断
+                    tokens = tokens[0:(max_length - 2)]
+                    label = label[0:(max_length - 2)]
+                tokens_cs = '[CLS] ' + ' '.join(tokens) + ' [SEP]'
                 label_cs = "[CLS] " + ' '.join(label) + ' [SEP]'
                 # token -> index
                 tokenized_text = tokenizer.tokenize(tokens_cs)  # 用tokenizer对句子分词
-                input_ids  = tokenizer.convert_tokens_to_ids(tokenized_text)  # 索引列表
+                input_ids = tokenizer.convert_tokens_to_ids(tokenized_text)  # 索引列表
 
                 # tag -> index
                 label_ids = [label_dic[i] for i in label_cs.split()]
@@ -56,15 +57,16 @@ def read_corpus(train_file_data, train_file_tag, max_length, label_dic):
                 result.append(feature)
     return result
 
-device = torch.device('cuda' if torch.cuda.is_available()  else "cpu")
+
+device = torch.device('cuda' if torch.cuda.is_available() else "cpu")
 MAX_LEN = 10
 if __name__ == '__main__':
     bert_config = BertConfig.from_pretrained(str(config['albert_config_path']), share_type='all')
-    model = BertModel.from_pretrained(config['bert_dir'],config=bert_config)
+    model = BertModel.from_pretrained(config['bert_dir'], config=bert_config)
     model.to(device)
     model.eval()
 
-    #base_path = os.path.abspath(os.path.join(os.getcwd(), "../.."))
+    # base_path = os.path.abspath(os.path.join(os.getcwd(), "../.."))
 
     base_path = 'Hello/ner_ch'
 
@@ -86,7 +88,8 @@ if __name__ == '__main__':
                'I_DOC': 13,
                '[CLS]': 101,
                '[SEP]': 102}
-    train_data = read_corpus(train_file_data=train_source, train_file_tag=train_target,max_length=15, label_dic=tag_dic)
+    train_data = read_corpus(train_file_data=train_source, train_file_tag=train_target, max_length=15,
+                             label_dic=tag_dic)
     train_ids = torch.LongTensor([temp.input_id for temp in train_data])
     train_masks = torch.LongTensor([temp.input_mask for temp in train_data])
     train_tags = torch.LongTensor([temp.label_id for temp in train_data])
@@ -113,4 +116,4 @@ if __name__ == '__main__':
             print(len(last_hidden_state))
             all_hidden_states, all_attentions = last_hidden_state[-2:]  # 这里获取所有层的hidden_satates以及attentions
             print(all_hidden_states[-2].shape)  # 倒数第二层hidden_states的shape
-            print(all_hidden_states[-2])# 倒数第二层 shape = (batch_size, seq_length, hidden_sates)
+            print(all_hidden_states[-2])  # 倒数第二层 shape = (batch_size, seq_length, hidden_sates)

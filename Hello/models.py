@@ -35,6 +35,7 @@ class Temp(models.Model):
     user_id = models.IntegerField()
     filename = models.CharField(max_length=100)
 
+
 class Dictionary(models.Model):
     dictionary_id = models.AutoField(primary_key=True)
     entity = models.CharField(max_length=100)
@@ -47,10 +48,12 @@ class Relation(models.Model):
     tail_entity = models.CharField(max_length=100)
     relation = models.CharField(max_length=100)
 
+
 class Aircraft(models.Model):
     aircraft_id = models.AutoField(primary_key=True)
     aircraft_name = models.CharField(max_length=100)
     description = models.CharField(max_length=200)
+
 
 class Model(models.Model):
     model_id = models.AutoField(primary_key=True)

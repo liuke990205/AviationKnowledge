@@ -18,13 +18,9 @@
 from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
 
-import copy
-import json
 import logging
 import os
-from io import open
 
-import six
 import torch
 from torch import nn
 from torch.nn import CrossEntropyLoss
@@ -35,7 +31,6 @@ from .file_utils import cached_path, WEIGHTS_NAME, TF_WEIGHTS_NAME
 
 logger = logging.getLogger(__name__)
 
-
 try:
     from torch.nn import Identity
 except ImportError:
@@ -43,11 +38,13 @@ except ImportError:
     class Identity(nn.Module):
         r"""A placeholder identity operator that is argument-insensitive.
         """
+
         def __init__(self, *args, **kwargs):
             super(Identity, self).__init__()
 
         def forward(self, input):
             return input
+
 
 class PreTrainedModel(nn.Module):
     r""" Base class for all models.
@@ -125,7 +122,6 @@ class PreTrainedModel(nn.Module):
             first_module.weight = nn.Parameter(second_module.weight.clone())
         else:
             first_module.weight.data = second_module.weight
-
 
         if hasattr(first_module, 'bias') and first_module.bias is not None:
             first_module.bias.data = torch.nn.functional.pad(
@@ -209,7 +205,8 @@ class PreTrainedModel(nn.Module):
         """ Save a model and its configuration file to a directory, so that it
             can be re-loaded using the `:func:`~pytorch_transformers.PreTrainedModel.from_pretrained`` class method.
         """
-        assert os.path.isdir(save_directory), "Saving path should be a directory where the model and configuration can be saved"
+        assert os.path.isdir(
+            save_directory), "Saving path should be a directory where the model and configuration can be saved"
 
         # Only save the model it-self if we are using distributed training
         model_to_save = self.module if hasattr(self, 'module') else self
@@ -323,7 +320,8 @@ class PreTrainedModel(nn.Module):
                 archive_file = pretrained_model_name_or_path
         # redirect to the cache, if necessary
         try:
-            resolved_archive_file = cached_path(archive_file, cache_dir=cache_dir, force_download=force_download, proxies=proxies)
+            resolved_archive_file = cached_path(archive_file, cache_dir=cache_dir, force_download=force_download,
+                                                proxies=proxies)
         except EnvironmentError as e:
             if pretrained_model_name_or_path in cls.pretrained_model_archive_map:
                 logger.error(
@@ -389,9 +387,11 @@ class PreTrainedModel(nn.Module):
         # Make sure we are able to load base models as well as derived models (with heads)
         start_prefix = ''
         model_to_load = model
-        if not hasattr(model, cls.base_model_prefix) and any(s.startswith(cls.base_model_prefix) for s in state_dict.keys()):
+        if not hasattr(model, cls.base_model_prefix) and any(
+                s.startswith(cls.base_model_prefix) for s in state_dict.keys()):
             start_prefix = cls.base_model_prefix + '.'
-        if hasattr(model, cls.base_model_prefix) and not any(s.startswith(cls.base_model_prefix) for s in state_dict.keys()):
+        if hasattr(model, cls.base_model_prefix) and not any(
+                s.startswith(cls.base_model_prefix) for s in state_dict.keys()):
             model_to_load = getattr(model, cls.base_model_prefix)
 
         load(model_to_load, prefix=start_prefix)
@@ -403,7 +403,7 @@ class PreTrainedModel(nn.Module):
                 model.__class__.__name__, unexpected_keys))
         if len(error_msgs) > 0:
             raise RuntimeError('Error(s) in loading state_dict for {}:\n\t{}'.format(
-                               model.__class__.__name__, "\n\t".join(error_msgs)))
+                model.__class__.__name__, "\n\t".join(error_msgs)))
 
         if hasattr(model, 'tie_weights'):
             model.tie_weights()  # make sure word embedding weights are still tied
@@ -439,6 +439,7 @@ class Conv1D(nn.Module):
 
 class PoolerStartLogits(nn.Module):
     """ Compute SQuAD start_logits from sequence hidden states. """
+
     def __init__(self, config):
         super(PoolerStartLogits, self).__init__()
         self.dense = nn.Linear(config.hidden_size, 1)
@@ -460,6 +461,7 @@ class PoolerStartLogits(nn.Module):
 class PoolerEndLogits(nn.Module):
     """ Compute SQuAD end_logits from sequence hidden states and start token hidden state.
     """
+
     def __init__(self, config):
         super(PoolerEndLogits, self).__init__()
         self.dense_0 = nn.Linear(config.hidden_size * 2, config.hidden_size)
@@ -483,9 +485,9 @@ class PoolerEndLogits(nn.Module):
         assert start_states is not None or start_positions is not None, "One of start_states, start_positions should be not None"
         if start_positions is not None:
             slen, hsz = hidden_states.shape[-2:]
-            start_positions = start_positions[:, None, None].expand(-1, -1, hsz) # shape (bsz, 1, hsz)
-            start_states = hidden_states.gather(-2, start_positions) # shape (bsz, 1, hsz)
-            start_states = start_states.expand(-1, slen, -1) # shape (bsz, slen, hsz)
+            start_positions = start_positions[:, None, None].expand(-1, -1, hsz)  # shape (bsz, 1, hsz)
+            start_states = hidden_states.gather(-2, start_positions)  # shape (bsz, 1, hsz)
+            start_states = start_states.expand(-1, slen, -1)  # shape (bsz, slen, hsz)
 
         x = self.dense_0(torch.cat([hidden_states, start_states], dim=-1))
         x = self.activation(x)
@@ -500,6 +502,7 @@ class PoolerEndLogits(nn.Module):
 
 class PoolerAnswerClass(nn.Module):
     """ Compute SQuAD 2.0 answer class from classification and start tokens hidden states. """
+
     def __init__(self, config):
         super(PoolerAnswerClass, self).__init__()
         self.dense_0 = nn.Linear(config.hidden_size * 2, config.hidden_size)
@@ -526,14 +529,14 @@ class PoolerAnswerClass(nn.Module):
         hsz = hidden_states.shape[-1]
         assert start_states is not None or start_positions is not None, "One of start_states, start_positions should be not None"
         if start_positions is not None:
-            start_positions = start_positions[:, None, None].expand(-1, -1, hsz) # shape (bsz, 1, hsz)
-            start_states = hidden_states.gather(-2, start_positions).squeeze(-2) # shape (bsz, hsz)
+            start_positions = start_positions[:, None, None].expand(-1, -1, hsz)  # shape (bsz, 1, hsz)
+            start_states = hidden_states.gather(-2, start_positions).squeeze(-2)  # shape (bsz, hsz)
 
         if cls_index is not None:
-            cls_index = cls_index[:, None, None].expand(-1, -1, hsz) # shape (bsz, 1, hsz)
-            cls_token_state = hidden_states.gather(-2, cls_index).squeeze(-2) # shape (bsz, hsz)
+            cls_index = cls_index[:, None, None].expand(-1, -1, hsz)  # shape (bsz, 1, hsz)
+            cls_token_state = hidden_states.gather(-2, cls_index).squeeze(-2)  # shape (bsz, hsz)
         else:
-            cls_token_state = hidden_states[:, -1, :] # shape (bsz, hsz)
+            cls_token_state = hidden_states[:, -1, :]  # shape (bsz, hsz)
 
         x = self.dense_0(torch.cat([start_states, cls_token_state], dim=-1))
         x = self.activation(x)
@@ -582,6 +585,7 @@ class SQuADHead(nn.Module):
             ``torch.FloatTensor`` of shape ``(batch_size,)``
             Log probabilities for the ``is_impossible`` label of the answers.
     """
+
     def __init__(self, config):
         super(SQuADHead, self).__init__()
         self.start_n_top = config.start_n_top
@@ -625,19 +629,22 @@ class SQuADHead(nn.Module):
         else:
             # during inference, compute the end logits based on beam search
             bsz, slen, hsz = hidden_states.size()
-            start_log_probs = F.softmax(start_logits, dim=-1) # shape (bsz, slen)
+            start_log_probs = F.softmax(start_logits, dim=-1)  # shape (bsz, slen)
 
-            start_top_log_probs, start_top_index = torch.topk(start_log_probs, self.start_n_top, dim=-1) # shape (bsz, start_n_top)
-            start_top_index_exp = start_top_index.unsqueeze(-1).expand(-1, -1, hsz) # shape (bsz, start_n_top, hsz)
-            start_states = torch.gather(hidden_states, -2, start_top_index_exp) # shape (bsz, start_n_top, hsz)
-            start_states = start_states.unsqueeze(1).expand(-1, slen, -1, -1) # shape (bsz, slen, start_n_top, hsz)
+            start_top_log_probs, start_top_index = torch.topk(start_log_probs, self.start_n_top,
+                                                              dim=-1)  # shape (bsz, start_n_top)
+            start_top_index_exp = start_top_index.unsqueeze(-1).expand(-1, -1, hsz)  # shape (bsz, start_n_top, hsz)
+            start_states = torch.gather(hidden_states, -2, start_top_index_exp)  # shape (bsz, start_n_top, hsz)
+            start_states = start_states.unsqueeze(1).expand(-1, slen, -1, -1)  # shape (bsz, slen, start_n_top, hsz)
 
-            hidden_states_expanded = hidden_states.unsqueeze(2).expand_as(start_states) # shape (bsz, slen, start_n_top, hsz)
+            hidden_states_expanded = hidden_states.unsqueeze(2).expand_as(
+                start_states)  # shape (bsz, slen, start_n_top, hsz)
             p_mask = p_mask.unsqueeze(-1) if p_mask is not None else None
             end_logits = self.end_logits(hidden_states_expanded, start_states=start_states, p_mask=p_mask)
-            end_log_probs = F.softmax(end_logits, dim=1) # shape (bsz, slen, start_n_top)
+            end_log_probs = F.softmax(end_logits, dim=1)  # shape (bsz, slen, start_n_top)
 
-            end_top_log_probs, end_top_index = torch.topk(end_log_probs, self.end_n_top, dim=1) # shape (bsz, end_n_top, start_n_top)
+            end_top_log_probs, end_top_index = torch.topk(end_log_probs, self.end_n_top,
+                                                          dim=1)  # shape (bsz, end_n_top, start_n_top)
             end_top_log_probs = end_top_log_probs.view(-1, self.start_n_top * self.end_n_top)
             end_top_index = end_top_index.view(-1, self.start_n_top * self.end_n_top)
 
@@ -666,6 +673,7 @@ class SequenceSummary(nn.Module):
             summary_first_dropout: Add a dropout before the projection and activation
             summary_last_dropout: Add a dropout after the projection and activation
     """
+
     def __init__(self, config):
         super(SequenceSummary, self).__init__()
 
@@ -711,12 +719,12 @@ class SequenceSummary(nn.Module):
             output = hidden_states.mean(dim=1)
         elif self.summary_type == 'cls_index':
             if cls_index is None:
-                cls_index = torch.full_like(hidden_states[..., :1, :], hidden_states.shape[-2]-1, dtype=torch.long)
+                cls_index = torch.full_like(hidden_states[..., :1, :], hidden_states.shape[-2] - 1, dtype=torch.long)
             else:
                 cls_index = cls_index.unsqueeze(-1).unsqueeze(-1)
-                cls_index = cls_index.expand((-1,) * (cls_index.dim()-1) + (hidden_states.size(-1),))
+                cls_index = cls_index.expand((-1,) * (cls_index.dim() - 1) + (hidden_states.size(-1),))
             # shape of cls_index: (bsz, XX, 1, hidden_size) where XX are optional leading dim of hidden_states
-            output = hidden_states.gather(-2, cls_index).squeeze(-2) # shape (bsz, XX, hidden_size)
+            output = hidden_states.gather(-2, cls_index).squeeze(-2)  # shape (bsz, XX, hidden_size)
         elif self.summary_type == 'attn':
             raise NotImplementedError
 
