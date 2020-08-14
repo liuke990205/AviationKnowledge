@@ -13,7 +13,10 @@
     </facet>
   </component>
   <component name="NewModuleRootManager">
-    <content url="file://$MODULE_DIR$" />
+    <content url="file://$MODULE_DIR$">
+      <sourceFolder url="file://$MODULE_DIR$/Hello/ner_ch/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/Hello/ner_ch/src/albert" isTestSource="false" />
+    </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
   </component>
@@ -21,7 +24,6 @@
     <option name="TEMPLATE_CONFIGURATION" value="Django" />
   </component>
   <component name="TestRunnerService">
-    <option name="projectConfiguration" value="pytest" />
     <option name="PROJECT_TEST_RUNNER" value="pytest" />
   </component>
 </module>

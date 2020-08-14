@@ -70,11 +70,11 @@ urlpatterns = [
     path('toEntityRecognition/', entity_view.toEntityRecognition),
 
 
-    #path('ner/', entity_view.ner),
+    path('ner/', entity_view.ner),
     #上传带实体识别文件
-    #path('upload2/', entity_view.upload2),
+    path('upload2/', entity_view.upload2),
     #展示结果集
-    #path('display_result/', entity_view.display_result),
+    path('display_result/', entity_view.display_result),
 
 
 
