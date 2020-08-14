@@ -101,47 +101,70 @@ def getTable(request):
     # 获取本张表的所有字段
     sql = "select COLUMN_NAME from information_schema.COLUMNS where table_name = '%s'" % (table)
     count = cursor.execute(sql)
-    aList = set()
+    aList = list()
     for i in range(count):
-        aList.add(cursor.fetchone()[0])
+        rr = cursor.fetchone()[0]
+        if rr not in aList:
+            aList.append(rr)
 
     count = cursor.execute("show tables")
     tableList = list()
     for i in range(count):
         result = cursor.fetchone()
         tableList.append(result[0])
-
-    sql = "select TABLE_NAME,COLUMN_NAME,CONSTRAINT_NAME from INFORMATION_SCHEMA.KEY_COLUMN_USAGE where CONSTRAINT_SCHEMA ='source' AND REFERENCED_TABLE_NAME = '%s';" % (
-        table)
-    count = (cursor.execute(sql))
-    bList = set()
-    primary2 = []
-    if count > 0:
-        re = cursor.fetchone()
-
-        request.session['table2'] = re[0]
-        request.session['re_name'] = re[1]
-
-        sql2 = "select COLUMN_NAME from information_schema.COLUMNS where table_name = '%s'" % (re[0])
-        count = cursor.execute(sql2)
-
-        for i in range(count):
-            bList.add(cursor.fetchone()[0])
-        sql3 = "SELECT  COLUMN_NAME FROM INFORMATION_SCHEMA.`KEY_COLUMN_USAGE` WHERE table_name='%s' AND constraint_name='PRIMARY'" % (
-            re[0])
-        count = cursor.execute(sql3)
-        primary2 = cursor.fetchone()[0]
-
     sql4 = "SELECT  COLUMN_NAME FROM INFORMATION_SCHEMA.`KEY_COLUMN_USAGE` WHERE table_name='%s' AND constraint_name='PRIMARY'" % (
         table)
     count = cursor.execute(sql4)
     primary = cursor.fetchone()
 
+    table1_result = []
+    sql_1 = "select * from %s" % (table)
+    sum_1 = cursor.execute(sql_1)
+    for data in range(sum_1):
+        result_1 = cursor.fetchone()
+        table1_result.append(result_1)
+    print(table1_result)
+
+    sql = "select TABLE_NAME,COLUMN_NAME,CONSTRAINT_NAME from INFORMATION_SCHEMA.KEY_COLUMN_USAGE where CONSTRAINT_SCHEMA ='source' AND REFERENCED_TABLE_NAME = '%s';" % (
+        table)
+    count = (cursor.execute(sql))
+    bList = list()
+    primary2 = []
+
+    table2_result = []
+    print(count)
+    if count > 0:
+        re = cursor.fetchone()
+
+        request.session['table2'] = re[0]
+        print(re[0])
+        request.session['re_name'] = re[1]
+        table2 = re[0]
+
+        sql2 = "select COLUMN_NAME from information_schema.COLUMNS where table_name = '%s'" % (table2)
+        count = cursor.execute(sql2)
+        for i in range(count):
+            rr = cursor.fetchone()[0]
+            if rr not in bList:
+                bList.append(rr)
+
+        sql3 = "SELECT  COLUMN_NAME FROM INFORMATION_SCHEMA.`KEY_COLUMN_USAGE` WHERE table_name='%s' AND constraint_name='PRIMARY'" % (
+            table2)
+        count = cursor.execute(sql3)
+        primary2 = cursor.fetchone()[0]
+
+        sql_2 = "select * from %s" % (table2)
+        sum_2 = cursor.execute(sql_2)
+        for data in range(sum_2):
+            result_2 = cursor.fetchone()
+            table2_result.append(result_2)
+
     cursor.close()  # 关闭游标
     conn.close()  # 关闭连接
 
     return render(request, 'd2rq.html',
-                  {'tableList': tableList, 'aList': aList, 'table': table, 'bList': bList, 'primary': primary[0],
+                  {'tableList': tableList, 'aList': aList, 'table': table, 'table1_result': table1_result,
+                   'bList': bList, 'table2_result': table2_result, 'primary': primary[0],
                    'primary2': primary2})
 
 
