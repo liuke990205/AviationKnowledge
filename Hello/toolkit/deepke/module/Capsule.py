@@ -1,5 +1,4 @@
 import logging
-
 import torch
 import torch.nn as nn
 
@@ -49,7 +48,7 @@ class Capsule(nn.Module):
     @staticmethod
     def squash(x: torch.Tensor):
         x_norm = x.norm(p=2, dim=-1, keepdim=True)
-        mag = x_norm ** 2
+        mag = x_norm**2
         out = x / x_norm * mag / (1 + mag)
 
         return out

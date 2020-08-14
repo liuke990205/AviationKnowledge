@@ -1,7 +1,6 @@
 import torch.nn as nn
-from module import Embedding, RNN
-
 from . import BasicModule
+from module import Embedding, RNN
 
 
 class BiLSTM(BasicModule):

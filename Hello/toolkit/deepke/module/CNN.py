@@ -1,5 +1,4 @@
 import math
-
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
@@ -20,7 +19,6 @@ class CNN(nn.Module):
     此时，padding = k // 2
     stride 一般为 1
     """
-
     def __init__(self, config):
         """
         in_channels      : 一般就是 word embedding 的维度，或者 hidden size 的维度

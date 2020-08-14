@@ -1,7 +1,6 @@
 import logging
-
-import numpy as np
 import torch
+import numpy as np
 import torch.nn as nn
 import torch.nn.functional as F
 
@@ -22,6 +21,7 @@ class GCN(nn.Module):
         self.fcs = nn.ModuleList([nn.Linear(self.hidden_size, self.hidden_size) for i in range(self.num_layers - 1)])
         self.dropout = nn.Dropout(self.dropout)
 
+
     def forward(self, x, adj):
         L = x.size(1)
         AxW = self.fc1(torch.bmm(adj, x)) + self.fc1(x)
@@ -35,6 +35,9 @@ class GCN(nn.Module):
             AxW = self.dropout(AxW)
 
         return AxW
+
+
+
 
 
 class Tree(object):
@@ -128,14 +131,13 @@ def pad_adj(adj, max_len):
         adj = np.insert(adj, adj.shape[0], 0, axis=0)
 
 
+
 if __name__ == '__main__':
     class Config():
         num_layers = 3
         input_size = 50
         hidden_size = 100
         dropout = 0.3
-
-
     cfg = Config()
     x = torch.randn(1, 10, 50)
     adj = torch.empty(1, 10, 10).random_(2)

@@ -30,8 +30,13 @@ def upload3(request):
             messages.success(request, "上传成功！")
 
             request.session['new_data'] = new_data
+            a=[]
+            for data in new_data:
+                a.append(data)
+            str = ""
 
-            return render(request, 'relation_extract.html', {'new_data': new_data})
+            str=''.join(a)
+            return render(request, 'relation_extract.html', {'str': str})
         else:
             messages.success(request, "文件为空！")
             return redirect('/toRelation/')
@@ -192,7 +197,7 @@ def re_text(request):
 def relation_schema(type1, type2):
     schema_type1 = Relation.objects.values_list("head_entity", flat=True)
     schema_type2 = Relation.objects.values_list("tail_entity", flat=True)
-    print(schema_type1)
+    #print(schema_type1)
 
     for i in range(len(schema_type1)):
         if type1 == schema_type1[i] and type2 == schema_type2[i]:

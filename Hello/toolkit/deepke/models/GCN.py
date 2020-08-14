@@ -1,8 +1,8 @@
+import torch
 import torch.nn as nn
+from . import BasicModule
 from module import Embedding
 from module import GCN as GCNBlock
-
-from . import BasicModule
 
 
 class GCN(BasicModule):
@@ -20,6 +20,7 @@ class GCN(BasicModule):
 
     def forward(self, x):
         word, lens, head_pos, tail_pos, adj = x['word'], x['lens'], x['head_pos'], x['tail_pos'], x['adj']
+
 
         inputs = self.embedding(word, head_pos, tail_pos)
         output = self.gcn(inputs, adj)

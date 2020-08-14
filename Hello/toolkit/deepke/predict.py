@@ -1,15 +1,14 @@
-import logging
 import os
 import sys
-
-import hydra
-import matplotlib.pyplot as plt
-import models
 import torch
+import logging
+import hydra
+import models
 from hydra import utils
-from preprocess import _serialize_sentence, _convert_tokens_into_index, _add_pos_seq, _handle_relation_data
-from serializer import Serializer
 from utils import load_pkl, load_csv
+from serializer import Serializer
+from preprocess import _serialize_sentence, _convert_tokens_into_index, _add_pos_seq, _handle_relation_data
+import matplotlib.pyplot as plt
 
 logger = logging.getLogger(__name__)
 

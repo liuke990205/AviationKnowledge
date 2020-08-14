@@ -1,7 +1,7 @@
-from .Attention import DotAttention, MultiHeadAttention
-from .CNN import CNN
-from .Capsule import Capsule
 from .Embedding import Embedding
-from .GCN import GCN
+from .CNN import CNN
 from .RNN import RNN
+from .Attention import DotAttention, MultiHeadAttention
 from .Transformer import Transformer
+from .Capsule import Capsule
+from .GCN import GCN

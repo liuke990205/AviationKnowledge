@@ -16,6 +16,7 @@ config = Config()
 
 
 def test_CNN():
+
     x = torch.randn(4, 5, 100)
     seq = torch.arange(4, 0, -1)
     mask = seq_len_to_mask(seq, max_len=5)

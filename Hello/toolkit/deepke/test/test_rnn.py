@@ -1,6 +1,7 @@
 import pytest
 import torch
 from module import RNN
+from utils import seq_len_to_mask
 
 
 class Config(object):
