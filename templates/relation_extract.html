@@ -1,6 +1,6 @@
 {% extends 'index.html' %}
 {% block en %}
-
+{% load pagination_tags %}
     <!DOCTYPE html>
     <html lang="en">
     <head>
@@ -127,7 +127,7 @@
                             结果显示：
                         </header>
                         <div class="panel-body">
-                            <div class="show-list" style="position: relative;top: 30px;">
+                            <div class="show-list" style="position: relative;top: 30px;text-align: center">
                                 <table style="width: 1200px" class="table table-bordered table-hover" align="center"
                                        border="solid 3px">
                                     <thead>
@@ -145,6 +145,7 @@
                                     </tr>
                                     </thead>
                                     <tbody id="tb">
+                                    {% autopaginate resultList 4 %}
                                     {% for list in resultList %}
                                         <tr>
 
@@ -184,6 +185,7 @@
                                         </tbody>
                                     {% endfor %}
                                 </table>
+                            {% paginate %}
                             </div>
                             <br>
                             <form name="text" method="post" action="/saveRel/">
