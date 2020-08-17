@@ -121,7 +121,7 @@
                 <div class="col-md-12">
                     <div class="panel panel-default">
                         <header class="panel-heading">
-                            识别结果2：
+                            实体列表：
                         </header>
                         <div class="panel-body">
                             <div class="show-list" style="position: relative;top: 20px;text-align: center">
@@ -134,6 +134,9 @@
                                         <th align="center" width="200" class="text-center" style="font-size: 13px">
                                             实体类型
                                         </th>
+                                        <th align="center" width="200" class="text-center" style="font-size: 13px">
+                                            操作
+                                        </th>
                                     </tr>
                                     </thead>
                                     <tbody id="tb">
@@ -144,6 +147,24 @@
                                                 style="display:table-cell; vertical-align:middle; font-size: 12px">{{ list.str }}</td>
                                             <td align="center"
                                                 style="display:table-cell; vertical-align:middle; font-size: 12px">{{ list.type }}</td>
+
+                                            <td class="text-center">
+                                                <!-- 按钮触发模态框 -->
+                                                <input type="button" class="btn btn-warning btn-sm doProModify"
+                                                       style="font-size: 15px" data-toggle="modal"
+                                                       data-target="#myModal" value="Modify"
+                                                       onclick="
+                                                               document.getElementById('Entity').value='{{ list.str }}';
+                                                               document.getElementById('EntityType').value='{{ list.type }}';">
+                                                <a href="{% url 'deleteTemp' %}?temp_id={{ list.temp_id }}">
+                                                    <button class="btn btn-danger" type="button"
+                                                            onclick="return confirm('是否确认删除？');">
+                                                        <span class="glyphicon glyphicon-remove"
+                                                              aria-hidden="true"></span> Delete
+                                                    </button>
+                                                </a>
+                                            </td>
+
                                         </tr>
                                         </tbody>
                                     {% endfor %}
@@ -159,6 +180,50 @@
             {% endif %}
         </div>
     </div>
+
+    <!-- 模态框（Modal） 修改-->
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal"
+                            aria-hidden="true">×
+                    </button>
+                    <h4 class="modal-title" id="myModalLabel" style="font-size:20px;">
+                        Modify Entity Information
+                    </h4>
+                </div>
+                <div class="modal-body">
+                    <form id="modifyTemp" class="form-horizontal" action="/modifyEntity/" method="post">
+                        {% csrf_token %}
+
+                        <div class="form-group">
+                            <label for="headEntity" class="col-sm-2 control-label">实体：</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" id="Entity" name="Entity"
+                                       placeholder="Entity" required="required">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="headEntityType" class="col-sm-2 control-label">实体类型：</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" id="EntityType" name="EntityType"
+                                       placeholder="EntityType" required="required">
+                            </div>
+                        </div>
+
+
+                        <div class="modal-footer">
+                            <button class="btn btn-default" data-dismiss="modal">关闭</button>
+                            <button type="submit" class="btn btn-primary updatePro">提交更改</button>
+                        </div>
+                    </form>
+                </div>
+
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+
     {% if messages %}
         <script>
             {% for msg in messages %}

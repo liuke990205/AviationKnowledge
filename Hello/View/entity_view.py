@@ -26,7 +26,7 @@ def convert(dict, sentence):
         stop = t['stop']
         type = lables[t['type']]
         if t['start'] > s:
-            data = {'str': sentence[s:start], 'type': 'none'}
+            data = { 'str': sentence[s:start], 'type': 'none'}
             list.append(data)
         data = {'str': sentence[start:stop], 'type': type}
         list.append(data)
@@ -95,7 +95,7 @@ def upload2(request):
                 sentence = sentence.replace(" ", "")
                 temp = cn.predict(sentence)
                 list.extend(convert(temp, sentence))
-                list.append({'str': '', 'type': 'enter'})
+                list.append({'index': '', 'str': '', 'type': 'enter'})
                 save(temp)
             request.session['doc'] = list
             return redirect('/display_result/')
@@ -110,4 +110,14 @@ def display_result(request):
     for li in doc:
         if (li['type'] != 'none') & (li['type'] != 'enter'):
             resultList.append(li)
+    print(resultList)
     return render(request, 'entity_recognition.html', {'doc': doc, 'resultList': resultList})
+
+
+
+def modifyEntity(request):
+    entity = request.POST.get('Entity')
+    entityType = request.POST.get('EntityType')
+    print(entity, entityType)
+
+    pass

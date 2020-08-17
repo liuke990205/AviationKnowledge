@@ -75,7 +75,8 @@ urlpatterns = [
     path('upload2/', entity_view.upload2),
     #展示结果集
     path('display_result/', entity_view.display_result),
-
+    #实体信息修改
+    path('modifyEntity/', entity_view.modifyEntity),
 
 
     #跳转到关系抽取页面
