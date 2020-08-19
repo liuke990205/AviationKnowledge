@@ -77,7 +77,10 @@ urlpatterns = [
     path('display_result/', entity_view.display_result),
     #实体信息修改
     path('modifyEntity/', entity_view.modifyEntity),
+    #实体信息删除
+    path('deleteEntity/', entity_view.deleteEntity, name='deleteEntity'),
 
+    path('save_entity/', entity_view.save_entity),
 
     #跳转到关系抽取页面
     path('toRelation/', relation_extraction_view.toRelation),
@@ -101,6 +104,7 @@ urlpatterns = [
     path('relation_modify/', relation_view.relation_modify),
     #进行关系删除操作
     path('relation_delete/', relation_view.relation_delete, name='relation_delete'),
+
 
     #跳转到问答系统界面
     path('toAnswer/', answer_view.toAnswer),

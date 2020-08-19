@@ -125,51 +125,63 @@
                         </header>
                         <div class="panel-body">
                             <div class="show-list" style="position: relative;top: 20px;text-align: center">
-                                <table style="width: 1100px" class="table table-bordered table-hover" align="center"
-                                       border="solid 2px">
-                                    <thead>
-                                    <tr align="center" class="text-danger">
-                                        <th align="center" width="200" class="text-center" style="font-size: 13px">实体
-                                        </th>
-                                        <th align="center" width="200" class="text-center" style="font-size: 13px">
-                                            实体类型
-                                        </th>
-                                        <th align="center" width="200" class="text-center" style="font-size: 13px">
-                                            操作
-                                        </th>
-                                    </tr>
-                                    </thead>
-                                    <tbody id="tb">
-                                    {% autopaginate resultList 4 %}
-                                    {% for list in resultList %}
-                                        <tr>
-                                            <td align="center"
-                                                style="display:table-cell; vertical-align:middle; font-size: 12px">{{ list.str }}</td>
-                                            <td align="center"
-                                                style="display:table-cell; vertical-align:middle; font-size: 12px">{{ list.type }}</td>
-
-                                            <td class="text-center">
-                                                <!-- 按钮触发模态框 -->
-                                                <input type="button" class="btn btn-warning btn-sm doProModify"
-                                                       style="font-size: 15px" data-toggle="modal"
-                                                       data-target="#myModal" value="Modify"
-                                                       onclick="
-                                                               document.getElementById('Entity').value='{{ list.str }}';
-                                                               document.getElementById('EntityType').value='{{ list.type }}';">
-                                                <a href="{% url 'deleteTemp' %}?temp_id={{ list.temp_id }}">
-                                                    <button class="btn btn-danger" type="button"
-                                                            onclick="return confirm('是否确认删除？');">
-                                                        <span class="glyphicon glyphicon-remove"
-                                                              aria-hidden="true"></span> Delete
-                                                    </button>
-                                                </a>
-                                            </td>
-
+                                <form method="post" name="save" action="/save_entity/">
+                                    {% csrf_token %}
+                                    <table style="width: 1100px" class="table table-bordered table-hover" align="center"
+                                           border="solid 2px">
+                                        <thead>
+                                        <tr align="center" class="text-danger">
+                                            <th align="center" width="200" class="text-center" style="font-size: 13px">
+                                                实体
+                                            </th>
+                                            <th align="center" width="200" class="text-center" style="font-size: 13px">
+                                                实体类型
+                                            </th>
+                                            <th align="center" width="200" class="text-center" style="font-size: 13px">
+                                                操作
+                                            </th>
                                         </tr>
-                                        </tbody>
-                                    {% endfor %}
-                                </table>
-                                {% paginate %}
+                                        </thead>
+                                        <tbody id="tb">
+                                        {% autopaginate resultList 4 %}
+                                        {% for list in resultList %}
+                                            <tr>
+                                                <td align="center"
+                                                    style="display:table-cell; vertical-align:middle; font-size: 12px">{{ list.str }}</td>
+                                                <td align="center"
+                                                    style="display:table-cell; vertical-align:middle; font-size: 12px">{{ list.type }}</td>
+
+                                                <td class="text-center">
+                                                    <!-- 按钮触发模态框 -->
+                                                    <input type="button" class="btn btn-warning btn-sm doProModify"
+                                                           style="font-size: 15px" data-toggle="modal"
+                                                           data-target="#myModal" value="Modify"
+                                                           onclick="
+                                                                   document.getElementById('index').value='{{ list.index }}';
+                                                                   document.getElementById('Entity').value='{{ list.str }}';
+                                                                   document.getElementById('EntityType').value='{{ list.type }}';
+                                                                   ">
+                                                    <a href="{% url 'deleteEntity' %}?index={{ list.index }}">
+                                                        <button class="btn btn-danger" type="button"
+                                                                onclick="return confirm('是否确认删除？');">
+                                                            <span class="glyphicon glyphicon-remove"
+                                                                  aria-hidden="true"></span> Delete
+                                                        </button>
+                                                    </a>
+                                                </td>
+
+                                            </tr>
+                                            </tbody>
+                                        {% endfor %}
+                                    </table>
+                                    {% paginate %}
+                                    <br>
+                                    <button type="submit"
+                                            style="background-color:#8fd19e; width: 200px;height: 32px; text-align: center"
+                                            name="save_entity">
+                                        保存数据
+                                    </button>
+                                </form>
                             </div>
                         </div>
                     </div>
@@ -196,16 +208,22 @@
                 <div class="modal-body">
                     <form id="modifyTemp" class="form-horizontal" action="/modifyEntity/" method="post">
                         {% csrf_token %}
-
                         <div class="form-group">
-                            <label for="headEntity" class="col-sm-2 control-label">实体：</label>
+                            <label for="index" class="col-sm-2 control-label">编号：</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" id="index" name="index"
+                                       placeholder="index" required="required" readonly>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="Entity" class="col-sm-2 control-label">实体：</label>
                             <div class="col-sm-10">
                                 <input type="text" class="form-control" id="Entity" name="Entity"
                                        placeholder="Entity" required="required">
                             </div>
                         </div>
                         <div class="form-group">
-                            <label for="headEntityType" class="col-sm-2 control-label">实体类型：</label>
+                            <label for="EntityType" class="col-sm-2 control-label">实体类型：</label>
                             <div class="col-sm-10">
                                 <input type="text" class="form-control" id="EntityType" name="EntityType"
                                        placeholder="EntityType" required="required">

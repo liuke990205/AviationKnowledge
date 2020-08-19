@@ -5,12 +5,14 @@ from django.shortcuts import render, redirect
 
 # Create your views here.
 from Hello.ner_ch.src.lstm_crf.main import NER
+from Hello.models import Log, Annotation, User, Dictionary, Temp, Relation
 
 
 def toEntityRecognition(request):
     return render(request, 'entity_recognition.html')
 
 
+index = 0
 def convert(dict, sentence):
     lables = {'AIR': '航空器', 'WEA': '武器', 'MATH': '数学模型', 'SYS': '系统', 'TAR': '性能指标', 'DOC': '参考文档'}
     list = []
@@ -19,46 +21,25 @@ def convert(dict, sentence):
 
     def function(date):
         return date['start']
-
     dict.sort(key=function)
+    #声明全局变量
+    global index
     for t in dict:
         start = t['start']
         stop = t['stop']
         type = lables[t['type']]
         if t['start'] > s:
-            data = { 'str': sentence[s:start], 'type': 'none'}
+            data = {'index': index, 'str': sentence[s:start], 'type': 'none'}
             list.append(data)
-        data = {'str': sentence[start:stop], 'type': type}
+        data = {'index': index, 'str': sentence[start:stop], 'type': type}
         list.append(data)
         s = stop
         end = stop
+        index = index +1
     if len(sentence) > end:
-        data = {'str': sentence[end:len(sentence)], 'type': 'none'}
+        data = {'index': index+1, 'str': sentence[end:len(sentence)], 'type': 'none'}
         list.append(data)
     return list
-
-
-def save(list):
-    lables = {'AIR': '航空器', 'WEA': '武器', 'MATH': '数学模型', 'SYS': '系统', 'TAR': '性能指标', 'DOC': '参考文档'}
-    dict = {}
-    dicfile = 'Hello/ner_ch/data/dic.csv'
-    with open(dicfile, 'r') as f:
-        reader = csv.reader(f)
-        for row in reader:
-            dict[row[1]] = row[2]
-            n = int(row[0])
-    add = []
-    for t in list:
-        word = t['word']
-        type = lables[t['type']]
-        if word not in dict.keys():
-            dict[word] = type
-            temp = [n + 1, word, type]
-            add.append(temp)
-            n = n + 1
-    with open(dicfile, "a+", newline='') as file:
-        csv_file = csv.writer(file)
-        csv_file.writerows(add)
 
 
 def ner(request):
@@ -70,7 +51,7 @@ def ner(request):
             cn = NER("predict")
             temp = cn.predict(sentence)
             list = convert(temp, sentence)
-            save(temp)
+            #save(temp)
     request.session['doc'] = list
     return redirect('/display_result/')
 
@@ -96,12 +77,28 @@ def upload2(request):
                 temp = cn.predict(sentence)
                 list.extend(convert(temp, sentence))
                 list.append({'index': '', 'str': '', 'type': 'enter'})
-                save(temp)
+                #save(temp)
             request.session['doc'] = list
             return redirect('/display_result/')
         else:
             messages.success(request, "文件为空！")
             return redirect('/ner/')
+
+
+def save_entity(request):
+    resultList = request.session.get('result_List')
+    print(resultList)
+    for data in resultList:
+        # 注意get和filter的区别
+        d = Dictionary.objects.filter(entity=data['str'])
+        if d:
+            pass
+        else:
+            dict = Dictionary(entity=data['str'], entity_type=data['type'])  # 将数据插入到数据库中
+            dict.save()
+    messages.success(request, "保存成功！")
+    return render(request, 'entity_recognition.html')
+
 
 
 def display_result(request):
@@ -111,13 +108,43 @@ def display_result(request):
         if (li['type'] != 'none') & (li['type'] != 'enter'):
             resultList.append(li)
     print(resultList)
+    request.session['result_List'] = resultList
+
     return render(request, 'entity_recognition.html', {'doc': doc, 'resultList': resultList})
-
-
 
 def modifyEntity(request):
     entity = request.POST.get('Entity')
     entityType = request.POST.get('EntityType')
-    print(entity, entityType)
+    index = request.POST.get('index')
+    #print(index, entity, entityType)
+    resultList = request.session.get('result_List')
 
-    pass
+    for data in resultList:
+        if data['index'] == int(index):
+            print(index)
+            data['str'] = entity
+            data['type'] = entityType
+
+    print(resultList)
+    doc = request.session.get('doc')
+
+    request.session['result_List'] = resultList
+
+    return render(request, 'entity_recognition.html', {'doc': doc, 'resultList': resultList})
+
+
+def deleteEntity(request):
+    index = request.GET.get('index')
+    print(index)
+    #print(index, entity, entityType)
+    resultList = request.session.get('result_List')
+
+    for data in resultList:
+        if data['index'] == int(index):
+            print(data)
+            resultList.remove(data)
+        print(resultList)
+
+    request.session['result_List'] = resultList
+    doc = request.session.get('doc')
+    return render(request, 'entity_recognition.html', {'doc': doc, 'resultList': resultList})
