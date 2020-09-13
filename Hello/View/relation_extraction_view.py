@@ -30,7 +30,7 @@ def upload3(request):
             messages.success(request, "上传成功！")
 
             request.session['new_data'] = new_data
-            a=[]
+            a = []
             for data in new_data:
                 a.append(data)
             str = ""

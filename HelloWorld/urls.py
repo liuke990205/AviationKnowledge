@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.urls import path
 
-from Hello.View import views, annotation_view, answer_view, dataManager_view, entity_view, relation_view, home_view, d2rq_view, relation_extraction_view
+from Hello.View import views, annotation_view, answer_view, dataManager_view, entity_view, relation_view, home_view, d2rq_view, relation_extraction_view, excel_view
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -95,6 +95,15 @@ urlpatterns = [
     path('modifyRel/', relation_extraction_view.modifyRel),
     #进行保存操作
     path('saveRel/', relation_extraction_view.saveRel),
+
+
+
+    #跳转到Excel知识抽取界面
+    path('toExcel/', excel_view.toExcel),
+
+    path('upload_excel/', excel_view.upload_excel),
+
+    path('excel_extract/', excel_view.excel_extract),
 
     #跳转到关系查询界面
     path('toRelationSearch/', relation_view.toRelationSearch),

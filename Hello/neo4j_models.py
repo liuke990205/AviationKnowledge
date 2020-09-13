@@ -74,22 +74,19 @@ class Neo4j_Handle():
             "MATCH(x{name:\"" + entity1 + "\"}),(y{name:\"" + entity2 + "\"}) MERGE (x)-[jx:" + relation + "{type: \"" + relation + "\", id: \"" + id + "\"}]->(y)")
 
     def createNode(self, entity, type, dict):
-        # str="MERGE(x:" + type + "{name:\"" + entity + "\"})"
         string_list = []
         for key, value in dict.items():
-            # print(key, value)
             # 利用格式化函数
             st = "{0}{1}{2}{3}{4}{3}".format(",", key, ":", "'", value)
-            # st = ",description:'AA' "
             # 将字符串添加到列表中  便于后续字符串拼接
             string_list.append(st)
         # 进行字符串拼接
         st_list = "".join(string_list)
-        print(st_list)
         str = "MERGE(x:" + type + "{" + " name:\"" + entity + "\" " + st_list + "})"
-        print(str)
-        # str = "MERGE(x:%s{%s:%s})" % (''.join(type), 'name', {1}{0}{1}.format(entity,""))
         self.graph.run(str)
+
+
+
 
     def modifyRelation(self, entity1, entity2, relation, temp_id):
         self.graph.run(

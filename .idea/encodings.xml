@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="Encoding">
+    <file url="file://$PROJECT_DIR$/Hello/ner_ch/data/uploadfile.txt" charset="ISO-8859-1" />
     <file url="file://$PROJECT_DIR$/exload_all_relation.csv" charset="GBK" />
     <file url="file://$PROJECT_DIR$/static/css/bootstrap-theme.css" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/static/css/bootstrap.min.css" charset="UTF-8" />
