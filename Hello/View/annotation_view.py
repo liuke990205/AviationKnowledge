@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import csv
 from itertools import combinations
 
@@ -29,7 +30,7 @@ def upload(request):
             user = User.objects.get(username=username)
             user_id = user.user_id
             # 读取文件内容，并且插入到数据库中
-            with open(file.name, "r", encoding="utf-8") as lines:
+            with open(file.name, "r") as lines:
                 data = lines.readlines()
                 for i in data:
                     i = i.strip('\n')

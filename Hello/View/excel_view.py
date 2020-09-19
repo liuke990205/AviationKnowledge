@@ -124,7 +124,6 @@ def excel_extract(request):
                         dict.update({property_list[i]: property_list_name[i]})
                     db = neo4jconn
                     db.createNode(name, type, dict)
-
         cursor.close()  # 关闭游标
         conn.close()  # 关闭连接
 

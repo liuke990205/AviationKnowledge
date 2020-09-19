@@ -72,6 +72,9 @@ class Neo4j_Handle():
     def insertRelation(self, entity1, relation, entity2, id):
         self.graph.run(
             "MATCH(x{name:\"" + entity1 + "\"}),(y{name:\"" + entity2 + "\"}) MERGE (x)-[jx:" + relation + "{type: \"" + relation + "\", id: \"" + id + "\"}]->(y)")
+    def insertExcelRelation(self, entity1, entity2, relation):
+        self.graph.run(
+            "MATCH(x{name:\"" + entity1 + "\"}),(y{name:\"" + entity2 + "\"}) MERGE (x)-[jx:" + relation + "{type: \"" + relation + "\"}]->(y)")
 
     def createNode(self, entity, type, dict):
         string_list = []
@@ -82,7 +85,7 @@ class Neo4j_Handle():
             string_list.append(st)
         # 进行字符串拼接
         st_list = "".join(string_list)
-        str = "MERGE(x:" + type + "{" + " name:\"" + entity + "\" " + st_list + "})"
+        str = "MERGE(x:" + type + "{" + " name:\"" + entity + " \" " + st_list + "})"
         self.graph.run(str)
 
 
