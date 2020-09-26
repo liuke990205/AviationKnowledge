@@ -20,7 +20,7 @@ def read_txt(infile, outfile, num):
             outfopen.writelines("")
     infopen.close()
     outfopen.close()
-    if num ==1:
+    if num == 1:
         #调用关键词匹配函数
         keyword_match1(outfile)
     elif num == 2:
@@ -82,6 +82,7 @@ def keyword_match1(infile):
         with open("C:/Users/26407/Desktop/txt_analysis/txt_export.csv", "a+", newline="") as csvfile:
             write = csv.writer(csvfile)
             write.writerow(data)
+
 
 def keyword_match2(infile):
     infopen = open(infile, 'r', encoding="utf-8")

@@ -5,6 +5,7 @@ import torch.optim as optim
 import yaml
 
 from configs.base import config
+from configs.base import config
 from lstm_crf.data_format import DataFormat
 from lstm_crf.model import BiLSTMCRF
 from lstm_crf.utils import f1_score, get_tags, format_result

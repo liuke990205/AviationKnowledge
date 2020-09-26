@@ -6,7 +6,7 @@ import jieba
 from django.contrib import messages
 from django.shortcuts import render, redirect
 
-from Hello.models import Relation, Rel
+from Hello.models import Relation, Rel, Temp, User, Annotation
 
 
 # 跳转到关系抽取页面
@@ -21,7 +21,7 @@ def upload3(request):
         if file:
             new_data = []
             # 读取文件内容，并且插入到数据库中
-            with open(file.name, "r", encoding="utf-8") as lines:
+            with open(file.name, "r") as lines:
                 dataList = lines.readlines()
                 print(dataList)
                 for data in dataList:
@@ -65,10 +65,11 @@ def re_text(request):
 
         f = open(temp_file_dir, 'w')
         f.truncate()
-
+        '''
         relList = Rel.objects.filter(re_flag=0)
         for rel in relList:
             rel.delete()
+        '''
 
         f1 = open(dic_dir, 'r', encoding='utf-8')
         f2 = open(temp_file_dir, 'a')
@@ -174,9 +175,16 @@ def re_text(request):
         os.system("python C:/Users/26407/Desktop/HelloWorld/hello/toolkit/deepke/predict1.py")
 
         textfile = open(temp_file_dir, 'r')
+        # 获取当前用户的ID
+        username = request.session.get('username')
+        user = User.objects.get(username=username)
+        user_id = user.user_id
 
         reader = csv.reader(textfile)
+
+        resultList = []
         for rel in reader:
+            temp_list = []
             if len(rel) == 6:
                 text = rel[0]
                 headEntity = rel[1]
@@ -184,12 +192,26 @@ def re_text(request):
                 tailEntity = rel[3]
                 tailEntityType = rel[4]
                 relationshipCategory = rel[5]
-                rel = Rel(headEntity=headEntity, headEntityType=headEntityType, tailEntity=tailEntity,
-                          tailEntityType=tailEntityType, relationshipCategory=relationshipCategory, text=text,
-                          re_flag=0)
-                rel.save()
+                '''
+                将文本添加到Annotation中
+                '''
+                ann = Annotation(content=text, flag= 1, file_name="", user_id_id=user_id)
+                ann.save()
 
-    resultList = Rel.objects.filter(re_flag=0)
+                print(ann.annotation_id)
+                temp_list = [ann.annotation_id, headEntity, headEntityType, tailEntity, tailEntityType, relationshipCategory, user_id, "", 0]
+                '''
+                rel = Temp(headEntity=headEntity, headEntityType=headEntityType, tailEntity=tailEntity,
+                          tailEntityType=tailEntityType, relationshipCategory=relationshipCategory,
+                           user_id=user_id, filename="", annotation_id_id=ann.annotation_id)
+                '''
+
+                #print(temp_list)
+                resultList.append(temp_list)
+                #rel.save()
+
+    #resultList = Rel.objects.filter(re_flag=0)
+    request.session['resultList'] = resultList
 
     return render(request, 'relation_extract.html', {'resultList': resultList})
 
@@ -245,11 +267,17 @@ def modifyRel(request):
 
 
 def saveRel(request):
-    relList = Rel.objects.filter(re_flag=0)
-    print(relList)
-    for rel in relList:
-        print(rel)
-        rel.re_flag = 1
-        rel.save()
+    ##relList = Rel.objects.filter(re_flag=0)
 
+
+    resultList = request.session.get('resultList')
+
+    ##print(relList)
+
+    for list in resultList:
+        print(type(list[5]))
+        rel = Temp(headEntity=list[1], headEntityType=list[2], tailEntity=list[3],
+                   tailEntityType=list[4], relationshipCategory=list[5],
+                   user_id=int(list[6]), filename="", annotation_id_id=list[0])
+        rel.save()
     return render(request, 'relation_extract.html')

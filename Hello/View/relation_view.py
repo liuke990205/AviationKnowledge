@@ -22,7 +22,7 @@ def Screen(searchResult):
         relationData.append(searchResult[i]['n1']['name'])
         relationData.append(searchResult[i]['rel']['type'])
         relationData.append(searchResult[i]['n2']['name'])
-        relationData.append(int(searchResult[i]['rel']['id']))
+        relationData.append((searchResult[i]['rel']['id']))
         tableData.append(relationData)
     print(tableData)
     return tableData

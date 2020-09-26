@@ -65,7 +65,7 @@ def upload2(request):
             with open('Hello/ner_ch/data/uploadfile.txt', 'wb+') as destination:
                 for chunk in file.chunks():
                     destination.write(chunk)
-            with open('Hello/ner_ch/data/uploadfile.txt', "r", encoding="utf-8") as lines:
+            with open('Hello/ner_ch/data/uploadfile.txt', "r") as lines:
                 dataList = lines.readlines()
                 for data in dataList:
                     data = data.strip('\n')
